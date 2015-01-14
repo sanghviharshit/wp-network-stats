@@ -52,7 +52,7 @@ class Site_Stats_Admin {
 	 * @since 0.1.0
 	 * @var string $table_name	The table name for site stats.
 	 */
-	public function __construct($table_name = 'ns_site_stats') {
+	public function __construct($table_name = NS_SITE_TABLE) {
 		global $wpdb;
 		$this->table_name = $table_name;
 		$this->site_table = $wpdb->base_prefix . $table_name;

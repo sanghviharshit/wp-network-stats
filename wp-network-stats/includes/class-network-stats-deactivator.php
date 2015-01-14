@@ -37,8 +37,12 @@ class Network_Stats_Deactivator {
 		*/
 		
 		//Delete/Drop tables
-		$wpdb->query("TRUNCATE TABLE {$wpdb->prefix}ns_site_stats");
-		$wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}ns_site_stats");
+		$wpdb->query("TRUNCATE TABLE {$wpdb->prefix}".NS_SITE_TABLE);
+		$wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}".NS_SITE_TABLE);
+		
+		$wpdb->query("TRUNCATE TABLE {$wpdb->prefix}".NS_PLUGIN_TABLE);
+		$wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}".NS_PLUGIN_TABLE);
+		
 		//Delete options
 		delete_option( 'network_stats_db_version');
 	}

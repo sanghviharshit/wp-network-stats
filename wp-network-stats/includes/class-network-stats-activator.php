@@ -54,7 +54,9 @@ class Network_Stats_Activator {
 		
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$site_table_name = $wpdb->prefix . 'ns_site_stats';
+		$site_table_name = $wpdb->prefix . NS_SITE_TABLE;
+		$plugin_table_name = $wpdb->prefix . NS_PLUGIN_TABLE;
+		
 		
 		$site_stats_sql = "CREATE TABLE $site_table_name (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
@@ -67,15 +69,23 @@ class Network_Stats_Activator {
 			total_users bigint(20) NOT NULL,
 			active_plugins bigint(20) NOT NULL,
 			site_type varchar(100) NOT NULL,
-			PRIMARY KEY (id)
+			UNIQUE KEY (id)
 		) $charset_collate;";
 	
+		$plugin_stats_sql = "CREATE TABLE $plugin_table_name (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			plugin varchar(255) NOT NULL,
+			total_sites varchar(255) NOT NULL,
+			UNIQUE KEY (id)
+		) $charset_collate;";
+				
 		// This includes the dbDelta function from WordPress.
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		
 		// Create/update the plugin tables.
 		dbDelta( $site_stats_sql );
-	
+		dbDelta( $plugin_stats_sql );
+		
 		add_option( 'network_stats_db_version', NS_VERSION );
 	}
 	

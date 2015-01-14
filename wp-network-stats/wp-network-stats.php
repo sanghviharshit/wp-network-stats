@@ -80,6 +80,8 @@ define( 'NS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'NS_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSW_PLUGIN_DIR', 'nsd_ssw/ssw.php' );
 define( 'MSP_PLUGIN_DIR', 'sitewide-privacy-options/sitewide-privacy-options.php' );
+define( 'NS_SITE_TABLE', 'ns_site_stats' );
+define( 'NS_PLUGIN_TABLE', 'ns_plugin_stats' );
 define( 'SSW_TABLE_NAME', 'ssw_main_nsd' );
 
 
