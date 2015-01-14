@@ -43,7 +43,7 @@ function activate_network_stats() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-network-stats-deactivator.php
  */
-function deactivate_network-stats() {
+function deactivate_network_stats() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-network-stats-deactivator.php';
 	Network_Stats_Deactivator::deactivate();
 }
@@ -72,4 +72,15 @@ function run_network_stats() {
 	$plugin->run();
 
 }
+
+// These defines are used later for various reasons.
+define( 'NS_VERSION', '0.1.0' );
+define( 'NS_PLUGIN', plugin_basename( __FILE__ ) );
+define( 'NS_DIR', plugin_dir_path( __FILE__ ) );
+define( 'NS_URL', plugin_dir_url( __FILE__ ) );
+define( 'SSW_PLUGIN_DIR', 'nsd_ssw/ssw.php' );
+define( 'MSP_PLUGIN_DIR', 'sitewide-privacy-options/sitewide-privacy-options.php' );
+define( 'SSW_TABLE_NAME', 'ssw_main_nsd' );
+
+
 run_network_stats();

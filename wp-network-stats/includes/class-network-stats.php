@@ -68,14 +68,14 @@ class Network_Stats {
 	 */
 	public function __construct() {
 
-		$this->plugin_name = 'plugin-name';
-		$this->version = '0.0.1';
+		$this->plugin_name = 'wp-network-stats';
+		$this->version = NS_VERSION;
 
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
+		
 	}
 
 	/**
@@ -103,6 +103,11 @@ class Network_Stats {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-network-stats-loader.php';
 
 		/**
+		 * The class contains all plugin helper functions
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-plugin-helper.php';
+		
+		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
@@ -112,6 +117,11 @@ class Network_Stats {
 		 * The class responsible for defining all actions that occur in the Dashboard.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-network-stats-admin.php';
+
+		/**
+		 * The class responsible for defining all functions related to site stats.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-site-stats-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -154,6 +164,10 @@ class Network_Stats {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		
+		/* Add action to display Export menu item in Network Admin's Dashboard */
+		$this->loader->add_action( 'network_admin_menu', $plugin_admin, 'register_menu' );
+		
 
 	}
 

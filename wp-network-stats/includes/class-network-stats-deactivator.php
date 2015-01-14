@@ -23,14 +23,24 @@
 class Network_Stats_Deactivator {
 
 	/**
-	 * Short Description. (use period)
+	 * Function that runs on plugin deactivation.
 	 *
-	 * Long Description.
+	 * Delete/Drops database tables.
 	 *
 	 * @since    0.0.1
 	 */
 	public static function deactivate() {
-
+		global $wpdb;
+		
+		/**
+		 * @todo handle upgrades to tables
+		*/
+		
+		//Delete/Drop tables
+		$wpdb->query("TRUNCATE TABLE {$wpdb->prefix}ns_site_stats");
+		$wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}ns_site_stats");
+		//Delete options
+		delete_option( 'network_stats_db_version');
 	}
 
 }

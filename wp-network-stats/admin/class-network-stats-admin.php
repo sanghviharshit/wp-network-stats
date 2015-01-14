@@ -100,4 +100,87 @@ class Network_Stats_Admin {
 
 	}
 
+	/**
+	 * Registers the menu items for admin dashboard
+	 *
+	 * @since 0.1.0
+	 */
+	public function register_menu() {
+		
+		/**
+		 * Adding Menu item "Export" in Network Dashboard, allowing it to be displayed for all super admin users
+		 * with "manage_network" capability and displaying it with position "1.74"
+		 */
+		
+		/**
+		 *
+		 * @todo Get the read/write capabilities from db required to view/manage the plugin as set by the user.
+		 */
+		// $read_cap = wp_statistics_validate_capability( $WP_Statistics->get_option('read_capability', 'manage_options') );
+		$read_cap = 'manage_network';
+		// $manage_cap = wp_statistics_validate_capability( $WP_Statistics->get_option('manage_capability', 'manage_options') );
+		$manage_cap = 'manage_network';
+		
+		if (is_network_admin () && ! Network_Stats_Helper::is_plugin_network_activated ( NS_PLUGIN )) {
+			return false;
+		}
+		
+		add_menu_page ( 'Network Stats', 'Network Stats', $read_cap, $this->plugin_name, array (
+				$this,
+				'network_stats_overview' 
+		), NS_URL . 'assets/icon-16x16.png', '3.756789' );
+		
+		add_submenu_page ( $this->plugin_name, 'Overview', 'Overview', $read_cap, $this->plugin_name, array (
+				$this,
+				'network_stats_overview' 
+		) );
+		
+		add_submenu_page ( $this->plugin_name, 'Network Stats - Site Stats', 'Site Stats', $read_cap, $this->plugin_name . '/Site_Stats', array (
+				$this,
+				'print_site_stats' 
+		) );
+		
+		/**
+		 *
+		 * @todo Plugin Stats
+		 */
+		add_submenu_page ( $this->plugin_name, 'Network Stats - Plugin Stats', 'Plugin Stats', $read_cap, $this->plugin_name . '/Plugin_Stats', array (
+				$this,
+				'network_stats_overview' 
+		) );
+		
+		/**
+		 *
+		 * @todo export menu
+		 *       add_submenu_page($this->plugin_name, 'Network Stats - Export Stats', 'Export Stats', $read_cap, ENS_EXPORT_CSV_SLUG,
+		 *       'ens_charts_shortcode' );
+		 */
+		
+		add_submenu_page ( $this->plugin_name, 'Network Stats - Options', 'Options', $read_cap, $this->plugin_name . '/Options', array (
+				$this,
+				'network_stats_overview' 
+		) );
+	}
+	
+	/**
+	 * Displays overview of the network stats.
+	 * @since 0.1.0
+	 */
+	public function network_stats_overview() {
+		/*
+		 * @TODO Overview page
+		 */
+		echo '<h1>Export Network Stats</h1><br/>';
+		echo '<br/><h3>TODO: This page will include options to export stats into CSV file</h3><br/>';
+	}
+	
+	/**
+	 * Print Site Stats.
+	 * @since 0.1.0
+	 */
+	public function print_site_stats() {
+		$site_stats = new Site_Stats_Admin ();
+		$site_stats->refresh_site_stats ();
+		$site_stats->print_site_stats ();
+	}
 }
