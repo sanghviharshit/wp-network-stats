@@ -4,7 +4,7 @@
  * Fired during plugin deactivation
  *
  * @link       https://github.com/sanghviharshit/
- * @since      1.0.0
+ * @since      0.0.1
  *
  * @package    Network_Stats
  * @subpackage Network_Stats/includes
@@ -15,7 +15,7 @@
  *
  * This class defines all code necessary to run during the plugin's deactivation.
  *
- * @since      1.0.0
+ * @since      0.0.1
  * @package    Network_Stats
  * @subpackage Network_Stats/includes
  * @author     Harshit Sanghvi <sanghvi.harshit@gmail.com>
@@ -27,7 +27,7 @@ class Network_Stats_Deactivator {
 	 *
 	 * Long Description.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 */
 	public static function deactivate() {
 

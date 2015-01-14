@@ -4,7 +4,7 @@
  * Register all actions and filters for the plugin
  *
  * @link       https://github.com/sanghviharshit/
- * @since      1.0.0
+ * @since      0.0.1
  *
  * @package    Network_Stats
  * @subpackage Network_Stats/includes
@@ -26,7 +26,7 @@ class Network_Stats_Loader {
 	/**
 	 * The array of actions registered with WordPress.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 * @access   protected
 	 * @var      array    $actions    The actions registered with WordPress to fire when the plugin loads.
 	 */
@@ -35,7 +35,7 @@ class Network_Stats_Loader {
 	/**
 	 * The array of filters registered with WordPress.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 * @access   protected
 	 * @var      array    $filters    The filters registered with WordPress to fire when the plugin loads.
 	 */
@@ -44,7 +44,7 @@ class Network_Stats_Loader {
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 */
 	public function __construct() {
 
@@ -56,7 +56,7 @@ class Network_Stats_Loader {
 	/**
 	 * Add a new action to the collection to be registered with WordPress.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 * @var      string               $hook             The name of the WordPress action that is being registered.
 	 * @var      object               $component        A reference to the instance of the object on which the action is defined.
 	 * @var      string               $callback         The name of the function definition on the $component.
@@ -70,7 +70,7 @@ class Network_Stats_Loader {
 	/**
 	 * Add a new filter to the collection to be registered with WordPress.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 * @var      string               $hook             The name of the WordPress filter that is being registered.
 	 * @var      object               $component        A reference to the instance of the object on which the filter is defined.
 	 * @var      string               $callback         The name of the function definition on the $component.
@@ -85,7 +85,7 @@ class Network_Stats_Loader {
 	 * A utility function that is used to register the actions and hooks into a single
 	 * collection.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 * @access   private
 	 * @var      array                $hooks            The collection of hooks that is being registered (that is, actions or filters).
 	 * @var      string               $hook             The name of the WordPress filter that is being registered.
@@ -112,7 +112,7 @@ class Network_Stats_Loader {
 	/**
 	 * Register the filters and actions with WordPress.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 */
 	public function run() {
 
