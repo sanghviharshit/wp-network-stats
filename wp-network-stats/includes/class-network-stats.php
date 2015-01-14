@@ -69,7 +69,7 @@ class Network_Stats {
 	public function __construct() {
 
 		$this->plugin_name = 'wp-network-stats';
-		$this->version = '0.0.1';
+		$this->version = NS_VERSION;
 
 		$this->load_dependencies();
 		$this->set_locale();
