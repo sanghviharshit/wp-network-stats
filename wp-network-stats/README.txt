@@ -4,7 +4,7 @@ Donate link: https://github.com/sanghviharshit/
 Tags: stats, network, site, plugin, theme, users, privacy, multisite
 Requires at least: 3.0.1
 Tested up to: 4.1
-Stable tag: 0.1.0
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,13 +17,10 @@ View/Export useful network information (e.g. #sites/user, #sites/theme, #sites/p
 == Installation ==
 
 = From your WordPress dashboard =
-
+> Not yet available on WordPress.org
 1. Visit 'Plugins > Add New'
-2. Search for 'bbPress'
-3. Activate bbPress from your Plugins page. (You'll be greeted with a Welcome page.)
-4. Visit 'Forums > Add New' and create some forums. (You can always delete these later.)
-5a. If you have pretty permalinks enabled, visit yourdomain.com/forums.
-5b. If you do not have pretty permalinks enabled, visit yourdomain.com?post_type=forum
+2. Search for 'WP Network Stats'
+3. Network Activate WP Network Stats from your Plugins page.
 
 = From WordPress.org =
 > Not yet available on WordPress.org
@@ -62,6 +59,9 @@ Make Pull requests to github repository.
 2. This is the second screen shot
 
 == Changelog ==
+
+= 0.2.0 =
+* Shows plugin stats.
 
 = 0.1.0 =
 * Shows site stats.

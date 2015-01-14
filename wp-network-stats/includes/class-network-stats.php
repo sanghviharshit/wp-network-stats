@@ -122,7 +122,12 @@ class Network_Stats {
 		 * The class responsible for defining all functions related to site stats.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-site-stats-admin.php';
-
+		
+		/**
+		 * The class responsible for defining all functions related to plugin stats.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-plugin-stats-admin.php';
+		
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.

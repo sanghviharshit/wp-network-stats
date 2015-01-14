@@ -146,7 +146,7 @@ class Network_Stats_Admin {
 		 */
 		add_submenu_page ( $this->plugin_name, 'Network Stats - Plugin Stats', 'Plugin Stats', $read_cap, $this->plugin_name . '/Plugin_Stats', array (
 				$this,
-				'network_stats_overview' 
+				'print_plugin_stats' 
 		) );
 		
 		/**
@@ -182,5 +182,15 @@ class Network_Stats_Admin {
 		$site_stats = new Site_Stats_Admin ();
 		$site_stats->refresh_site_stats ();
 		$site_stats->print_site_stats ();
+	}
+	
+	/**
+	 * Print Plugin Stats.
+	 * @since 0.2.0
+	 */
+	public function print_plugin_stats() {
+		$plugin_stats = new Plugin_Stats_Admin ();
+		$plugin_stats->refresh_plugin_stats ();
+		$plugin_stats->print_plugin_stats ();
 	}
 }

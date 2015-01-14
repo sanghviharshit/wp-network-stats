@@ -33,7 +33,7 @@ class Network_Stats_Helper {
 	 * @access   private
 	 * @var      bool    use_transient    use transient cache
 	 */
-	private $use_transient = false;
+	private static $use_transient = false;
 	
 	
 	/**
@@ -160,7 +160,7 @@ class Network_Stats_Helper {
 			}
 			$transient_name = self::get_transient_friendly_name( $plugin_file );
 	
-			if ( self::use_transient !== true || ! array_key_exists( $transient_name, $ns_active_plugins ) ) {
+			if ( self::$use_transient !== true || ! array_key_exists( $transient_name, $ns_active_plugins ) ) {
 				// We're either not using or don't have the transient index
 				$active_on = array();
 	
