@@ -6,11 +6,11 @@
  * Loads and defines the internationalization files for this plugin
  * so that it is ready for translation.
  *
- * @link       http://example.com
+ * @link       https://github.com/sanghviharshit/
  * @since      1.0.0
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
+ * @package    Network_Stats
+ * @subpackage Network_Stats/includes
  */
 
 /**
@@ -20,11 +20,11 @@
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
- * @author     Your Name <email@example.com>
+ * @package    Network_Stats
+ * @subpackage Network_Stats/includes
+ * @author     Harshit Sanghvi <sanghvi.harshit@gmail.com>
  */
-class Plugin_Name_i18n {
+class Network_Stats_i18n {
 
 	/**
 	 * The domain specified for this plugin.

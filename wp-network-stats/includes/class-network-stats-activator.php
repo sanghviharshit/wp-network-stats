@@ -3,11 +3,11 @@
 /**
  * Fired during plugin activation
  *
- * @link       http://example.com
+ * @link       https://github.com/sanghviharshit/
  * @since      1.0.0
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
+ * @package    Network_Stats
+ * @subpackage Network_Stats/includes
  */
 
 /**
@@ -16,11 +16,11 @@
  * This class defines all code necessary to run during the plugin's activation.
  *
  * @since      1.0.0
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
- * @author     Your Name <email@example.com>
+ * @package    Network_Stats
+ * @subpackage Network_Stats/includes
+ * @author     Harshit Sanghvi <sanghvi.harshit@gmail.com>
  */
-class Plugin_Name_Activator {
+class Network_Stats_Activator {
 
 	/**
 	 * Short Description. (use period)

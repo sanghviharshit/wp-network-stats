@@ -1,6 +1,6 @@
 === Plugin Name ===
 Contributors: (this should be a list of wordpress.org userid's)
-Donate link: http://example.com/
+Donate link: https://github.com/sanghviharshit//
 Tags: comments, spam
 Requires at least: 3.0.1
 Tested up to: 3.4
@@ -45,7 +45,7 @@ e.g.
 
 1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Place `<?php do_action('plugin_name_hook'); ?>` in your templates
+1. Place `<?php do_action('network_stats_hook'); ?>` in your templates
 
 == Frequently Asked Questions ==
 

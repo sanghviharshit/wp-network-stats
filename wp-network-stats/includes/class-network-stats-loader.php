@@ -3,11 +3,11 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       http://example.com
+ * @link       https://github.com/sanghviharshit/
  * @since      1.0.0
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
+ * @package    Network_Stats
+ * @subpackage Network_Stats/includes
  */
 
 /**
@@ -17,11 +17,11 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
- * @author     Your Name <email@example.com>
+ * @package    Network_Stats
+ * @subpackage Network_Stats/includes
+ * @author     Harshit Sanghvi <sanghvi.harshit@gmail.com>
  */
-class Plugin_Name_Loader {
+class Network_Stats_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.
