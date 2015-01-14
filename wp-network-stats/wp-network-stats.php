@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              http://about.me/harshit
- * @since             1.0.0
+ * @since             0.0.1
  * @package           Network_Stats
  *
  * @wordpress-plugin
  * Plugin Name:       WP Network Stats
  * Plugin URI:        https://github.com/sanghviharshit/
  * Description:       View/Export useful network information (e.g. #sites/user, #sites/theme, #sites/plugin, privacy settings, etc) of all the sites in a WordPress multisite network. 
- * Version:           1.0.0
+ * Version:           0.0.1
  * Author:            Harshit Sanghvi
  * Author URI:        http://about.me/harshit
  * License:           GPL-2.0+
@@ -64,7 +64,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-network-stats.php';
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  *
- * @since    1.0.0
+ * @since    0.0.1
  */
 function run_network_stats() {
 

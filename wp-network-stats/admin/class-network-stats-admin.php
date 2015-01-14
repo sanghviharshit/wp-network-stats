@@ -4,7 +4,7 @@
  * The dashboard-specific functionality of the plugin.
  *
  * @link       https://github.com/sanghviharshit/
- * @since      1.0.0
+ * @since      0.0.1
  *
  * @package    Network_Stats
  * @subpackage Network_Stats/admin
@@ -25,7 +25,7 @@ class Network_Stats_Admin {
 	/**
 	 * The ID of this plugin.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 * @access   private
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
@@ -34,7 +34,7 @@ class Network_Stats_Admin {
 	/**
 	 * The version of this plugin.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 * @access   private
 	 * @var      string    $version    The current version of this plugin.
 	 */
@@ -43,7 +43,7 @@ class Network_Stats_Admin {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 * @var      string    $plugin_name       The name of this plugin.
 	 * @var      string    $version    The version of this plugin.
 	 */
@@ -57,7 +57,7 @@ class Network_Stats_Admin {
 	/**
 	 * Register the stylesheets for the Dashboard.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 */
 	public function enqueue_styles() {
 
@@ -80,7 +80,7 @@ class Network_Stats_Admin {
 	/**
 	 * Register the JavaScript for the dashboard.
 	 *
-	 * @since    1.0.0
+	 * @since    0.0.1
 	 */
 	public function enqueue_scripts() {
 
