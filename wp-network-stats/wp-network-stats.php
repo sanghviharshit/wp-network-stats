@@ -74,7 +74,7 @@ function run_network_stats() {
 }
 
 // These defines are used later for various reasons.
-define( 'NS_VERSION', '0.0.1' );
+define( 'NS_VERSION', '0.1.0' );
 define( 'NS_PLUGIN', plugin_basename( __FILE__ ) );
 define( 'NS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'NS_URL', plugin_dir_url( __FILE__ ) );
