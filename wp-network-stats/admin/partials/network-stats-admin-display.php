@@ -5,11 +5,11 @@
  *
  * This file is used to markup the public-facing aspects of the plugin.
  *
- * @link       http://example.com
- * @since      1.0.0
+ * @link       https://github.com/sanghviharshit/
+ * @since      0.0.1
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/admin/partials
+ * @package    Network_Stats
+ * @subpackage Network_Stats/admin/partials
  */
 ?>
 
