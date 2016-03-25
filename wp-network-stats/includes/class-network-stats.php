@@ -166,14 +166,23 @@ class Network_Stats {
 	private function define_admin_hooks() {
 
 		$plugin_admin = new Network_Stats_Admin( $this->get_plugin_name(), $this->get_version() );
+		
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+		/* Add action to whitelist options that the form is able to save. */
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
 		
 		/* Add action to display Export menu item in Network Admin's Dashboard */
 		$this->loader->add_action( 'network_admin_menu', $plugin_admin, 'register_menu' );
-		
 
+		/* Add action to process options form data */
+		$this->loader->add_action( 'network_admin_edit_ns_options', $plugin_admin, 'ns_options_process' );
+		
+		/* Add action to run when cron job fires */
+		$this->loader->add_action( 'cron_generate_reports', $plugin_admin, 'generate_reports' );
+		
 	}
 
 	/**

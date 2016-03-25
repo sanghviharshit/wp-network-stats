@@ -40,6 +40,9 @@ class Network_Stats_Admin {
 	 */
 	private $version;
 
+	public $menu_slug;
+
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -51,6 +54,7 @@ class Network_Stats_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		$this->menu_slug = $plugin_name;
 
 	}
 
@@ -118,18 +122,18 @@ class Network_Stats_Admin {
 		 */
 		// $read_cap = wp_statistics_validate_capability( $WP_Statistics->get_option('read_capability', 'manage_options') );
 		$read_cap = 'manage_network';
-		// $manage_cap = wp_statistics_validate_capability( $WP_Statistics->get_option('manage_capability', 'manage_options') );
-		$manage_cap = 'manage_network';
 		
 		if (is_network_admin () && ! Network_Stats_Helper::is_plugin_network_activated ( NS_PLUGIN )) {
 			return false;
 		}
 		
-		add_menu_page ( 'Network Stats', 'Network Stats', $read_cap, $this->plugin_name, array (
+		add_menu_page ( 'Network Stats', 'Network Stats', $read_cap, $this->menu_slug, array (
 				$this,
 				'network_stats_overview' 
-		), NS_URL . 'assets/icon-16x16.png', '3.756789' );
+		), 'dashicons-analytics', '3.756789' );
 		
+
+		/*
 		add_submenu_page ( $this->plugin_name, 'Overview', 'Overview', $read_cap, $this->plugin_name, array (
 				$this,
 				'network_stats_overview' 
@@ -144,22 +148,24 @@ class Network_Stats_Admin {
 		 *
 		 * @todo Plugin Stats
 		 */
+		/*
 		add_submenu_page ( $this->plugin_name, 'Network Stats - Plugin Stats', 'Plugin Stats', $read_cap, $this->plugin_name . '/Plugin_Stats', array (
 				$this,
 				'print_plugin_stats' 
 		) );
-		
+		*/
 		/**
 		 *
 		 * @todo export menu
 		 *       add_submenu_page($this->plugin_name, 'Network Stats - Export Stats', 'Export Stats', $read_cap, ENS_EXPORT_CSV_SLUG,
 		 *       'ens_charts_shortcode' );
 		 */
-		
+		/*
 		add_submenu_page ( $this->plugin_name, 'Network Stats - Options', 'Options', $read_cap, $this->plugin_name . '/Options', array (
 				$this,
 				'network_stats_overview' 
 		) );
+		*/
 	}
 	
 	/**
@@ -167,21 +173,187 @@ class Network_Stats_Admin {
 	 * @since 0.1.0
 	 */
 	public function network_stats_overview() {
-		/*
-		 * @TODO Overview page
-		 */
-		echo '<h1>Export Network Stats</h1><br/>';
-		echo '<br/><h3>TODO: This page will include options to export stats into CSV file</h3><br/>';
+		?>
+		<div class="wrap">
+	        <h2>WP Network Stats</h2>
+				
+			<?php if ( isset( $_GET['updated'] ) ): ?>
+				<div class="updated"><p><?php _e( 'Reports are being generated in the background. Please wait for email notification.'); ?></p></div>
+			<?php endif; ?>
+
+	        <form method="POST" id="options" action="edit.php?action=ns_options">
+	            <?php settings_fields( NS_SETTINGS ); ?>
+	            <?php do_settings_sections( NS_SETTINGS_SECTION ); ?>
+	            <!--<?php submit_button(); ?>-->
+	            <input name="Submit" type="submit" class="button-primary" value="<?php esc_attr_e('Generate Report'); ?>" />
+	        </form>
+
+    	</div>
+    <?php
+		//self::generate_reports();
 	}
 	
+	/**
+	 * whitelist options.
+	 * since 0.1.0
+	 */
+	public function register_settings() { 
+		register_setting( NS_SETTINGS_SECTION, 'ns_options' );
+		
+		add_settings_section(NS_SETTINGS, 'WP Network Stats Settings', array( $this, 'ns_section_text'), NS_SETTINGS_SECTION);
+		
+		add_settings_field('email', 'Email Id for notification', array( $this, 'ns_setting_string'), NS_SETTINGS_SECTION, NS_SETTINGS);
+
+	}
+
+
+	public function ns_section_text() {
+		echo '<p>Change the settings for WP Network Stats plugin.</p>';
+	}
+
+	public function ns_setting_string() {
+		$options = get_site_option('ns_options');
+		echo "<input id='email' name='ns_options[email]' size='40' type='text' value='{$options['email']}' />";
+	}
+
+	/**
+     * Check if data in POST
+     *
+     * @since 1.0
+     */
+    public function admin_options_page_posted() {
+        if ( ! isset( $_GET['page'] ) || $_GET['page'] !== $this->menu_slug )
+            return;
+/*
+        if (isset($_POST['Submit'])) {
+        	echo "Saving";
+		}
+*/
+	}
+
+	public function ns_options_process() {
+		update_site_option( 'ns_options', $_POST['ns_options'] );
+
+		wp_schedule_single_event(time(), 'cron_generate_reports');
+
+		wp_redirect(
+	    	add_query_arg(
+		        array( 'page' => $this->menu_slug, 'updated' => 'true' ),
+		        (is_multisite() ? network_admin_url( 'admin.php' ) : admin_url( 'admin.php' ))
+		    )
+		);
+		exit;
+	}
+
+	/**
+	 * Generate Reports
+	 * @since 0.1.0
+	 */
+	
+	public function generate_reports() {
+		$site_stats = new Site_Stats_Admin ();
+		$site_stats->refresh_site_stats ();
+		//$site_stats->print_site_stats ();
+
+		/*
+		$plugin_stats = new Plugin_Stats_Admin ();
+		$plugin_stats->refresh_plugin_stats ();
+		//$plugin_stats->print_plugin_stats ();
+		*/
+
+		self::send_notification_email();
+	}
+
+	private function send_notification_email() {
+		
+		/*
+		$multiple_recipients = array(
+    		'recipient1@example.com',
+    		'recipient2@foo.example.com'
+		);
+		*/
+		$network_home_url = network_home_url();
+
+		$subj = 'WP Network Stats - Report';
+		$body = 'A report of network stats was requested for ' . $network_home_url . "\n\n";
+		
+		$all_themes = Network_Stats_Helper::get_list_all_themes();
+
+		/**
+		 *
+		 * @todo Get theme with error and highlight if one found. Use get_list_all_themes(array( 'errors' => true ))
+		 */
+
+		$all_plugins = Network_Stats_Helper::get_list_all_plugins();
+
+		foreach ( $all_plugins as $plugin_file => $plugin_data ) {
+			$active_on_network = Network_Stats_Helper::is_plugin_network_activated ( $plugin_file );
+			
+			if ($active_on_network) {
+				$count_network_active_plugins++;
+			}
+		}
+
+		$network_active_themes = WP_Theme::get_allowed_on_network ();
+		$count_network_active_themes = count($network_active_themes);
+
+		$body .= 'There are ' . count($all_themes) . ' themes. ' . $count_network_active_themes . ' are network enabled.' . "\n";
+		$body .= 'There are ' . count($all_plugins) . ' plugins. ' . $count_network_active_plugins . ' are network enabled.' . "\n";
+		
+		//Get All WordPress Users
+		global $wpdb;
+		$count_users = $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->users" );
+		
+		$all_super_admins = get_super_admins();
+		/*
+		$body .= 'List of super-admin users: ';
+		foreach ($super_admins as $admin) {
+  			echo '<li>' . $admin . '</li>';
+		}
+		*/
+
+		/**
+		 * @todo get support managers - should be able to use get_users() passing meta_key and meta_value
+		 *
+		 */
+
+		$body .= 'There are ' . $count_users . ' users. ' . count($all_super_admins) . ' are Super admins.' . "\n";
+
+		
+		$body .= "\n\n" . 'For more information on how to use this data, please visit https://github.com/sanghviharshit/WP-Network-Stats' . "\n\n";
+
+
+		$upload_dir = wp_upload_dir();
+		$report_dirname = $upload_dir['basedir'].'/'. NS_UPLOADS;
+		$report_site_stats = $report_dirname . '/' . 'site-stats.csv';
+		$report_plugin_stats = $report_dirname . '/' . 'plugin-stats.csv';
+		
+		$attachments = array();
+		array_push($attachments, $report_site_stats);
+		array_push($attachments, $report_plugin_stats);
+
+		//$headers[] = 'From: WP Network Stats <me@wp.org>';
+		
+		$options = get_site_option('ns_options');
+		$to_email = $options['email'];
+
+		//$headers[] = 'Cc: Harshit Sanghvi <sanghvi.harshit@gmail.com>';
+		$headers[] = 'Cc: hs2619@nyu.edu';
+
+		if(wp_mail( $to_email, $subj, $body, $headers, $attachments )) {
+			echo 'Email sent successfully';
+		} else {
+			echo 'Email could not be sent';
+		}
+	}
 	/**
 	 * Print Site Stats.
 	 * @since 0.1.0
 	 */
 	public function print_site_stats() {
 		$site_stats = new Site_Stats_Admin ();
-		$site_stats->refresh_site_stats ();
-		$site_stats->print_site_stats ();
+		//$site_stats->refresh_site_stats ();
+		//$site_stats->print_site_stats ();
 	}
 	
 	/**
@@ -191,6 +363,6 @@ class Network_Stats_Admin {
 	public function print_plugin_stats() {
 		$plugin_stats = new Plugin_Stats_Admin ();
 		$plugin_stats->refresh_plugin_stats ();
-		$plugin_stats->print_plugin_stats ();
+		//$plugin_stats->print_plugin_stats ();
 	}
 }

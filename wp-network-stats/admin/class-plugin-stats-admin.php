@@ -115,11 +115,34 @@ class Plugin_Stats_Admin {
 			$ns_plugin_data [] = $ns_plugin_row;
 		}
 		
+		/*
 		$wpdb->query ( 'TRUNCATE table ' . $this->plugin_table );
 		
 		foreach ( $ns_plugin_data as $plugin_data ) {
 			$wpdb->insert ( $this->plugin_table, $plugin_data );
 		}
+		*/
+
+		echo '
+				<table border="1">
+				';
+		
+		echo '
+				<tr>
+					<td>Plugin</td>
+					<td>Number of Sites</td>
+				</tr>';
+		
+		foreach ($ns_plugin_data as $plugin_data) {
+			echo '<tr>';
+			foreach ($plugin_data as $plugin_data_field) {
+				echo '<td>' . $plugin_data_field . '</td>';
+			}
+			echo '</tr>';
+		}
+		
+		echo '
+			</table>';
 		
 	}
 	

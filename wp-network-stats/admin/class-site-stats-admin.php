@@ -57,7 +57,7 @@ class Site_Stats_Admin {
 		$this->table_name = $table_name;
 		$this->site_table = $wpdb->base_prefix . $table_name;
 		
-		$this->ssw_table_name = $wpdb->base_prefix . SSW_TABLE_NAME;
+		$this->ssw_table_name = $wpdb->base_prefix . 'ssw_main_nsd';
 	}
 	
 	/**
@@ -68,7 +68,8 @@ class Site_Stats_Admin {
 	public function refresh_site_stats() {
 		global $wpdb;
 		
-		$blogs = $wpdb->get_results ( $wpdb->prepare ( "SELECT blog_id FROM {$wpdb->blogs} WHERE site_id = %d", $wpdb->siteid ) );
+		//$blogs = $wpdb->get_results ( $wpdb->prepare ( "SELECT blog_id FROM {$wpdb->blogs} WHERE site_id = %d", $wpdb->siteid ) );
+
 		/**
 		 *
 		 * @todo Take care of spam, deleted and archived sites
@@ -79,9 +80,12 @@ class Site_Stats_Admin {
 		 *       AND mature = '0'
 		 */
 		
+		$blog_list = Network_Stats_Helper::get_network_blog_list( );
+	
 		$ens_site_data = array ();
 		$ens_site_row = array ();
-		
+		$ens_plugin_data = array ();
+
 		/**
 		 * To add Table headers:
 		 * $ens_site_row = array("Blog ID", "Blog Name", "Blog URL", "Privacy", "Current Theme", "Admin Email", "Total Users", "Active Plugins", "Site Type");
@@ -92,13 +96,27 @@ class Site_Stats_Admin {
 		$plugins = Network_Stats_Helper::get_list_all_plugins ();
 		
 		// $site_admins_list = '';
-		
-		foreach ( $blogs as $blog ) {
-			switch_to_blog ( $blog->blog_id );
+		/* Get all the site admins
+		$users_query = new WP_User_Query( array(
+					'role' => 'administrator',
+					'orderby' => 'display_name'
+			) );
+			 
+			$results = $users_query->get_results();
+			foreach($results as $user)
+			{
+				$option_admin_email .= $user->user_email . ',';
+			}
+		*/
+		$ens_site_row = self::get_site_stats_csvheaders();
+		$ens_site_data [] = $ens_site_row;
+
+		foreach ( $blog_list as $blog ) {
+			switch_to_blog ( $blog['blog_id']);
 			$result = count_users ();
 			
 			/* http://codex.wordpress.org/Function_Reference/get_blog_details */
-			$blog_details = get_blog_details ( $blog->blog_id );
+			$blog_details = get_blog_details ( $blog['blog_id'] );
 			
 			$option_privacy = get_option ( 'blog_public', '' );
 			$option_theme = get_option ( 'template', '' );
@@ -115,13 +133,18 @@ class Site_Stats_Admin {
 				}
 			}
 			
+			foreach ($activated_plugins as $plugin_file => $plugin_data) {
+				$ens_plugin_data []= array($blog['blog_id'], $plugin_data ['Title']);
+			}
+
 			$count_active_plugins = count ( $activated_plugins );
 			
-			$site_type = $wpdb->get_var ( 'SELECT site_usage FROM ' . $ssw_table_name . ' WHERE blog_id = ' . $blog->blog_id );
-			
-			if (Network_Stats_Helper::is_plugin_network_activated ( SSW_PLUGIN_DIR )) {
+			if (Network_Stats_Helper::is_plugin_network_activated ( SSW_PLUGIN_URL )) {
+
+				$site_type = $wpdb->get_var ( 'SELECT site_usage FROM ' . $ssw_table_name . ' WHERE blog_id = ' . $blog['blog_id'] );
+				
 				$ens_site_row = array (
-						'blog_id' => $blog->blog_id,
+						'blog_id' => $blog['blog_id'],
 						'blog_name' => $blog_details->blogname,
 						'blog_url' => $blog_details->path,
 						'privacy' => $option_privacy,
@@ -133,28 +156,134 @@ class Site_Stats_Admin {
 				);
 			} else {
 				$ens_site_row = array (
-						'blog_id' => $blog->blog_id,
+						'blog_id' => $blog['blog_id'],
 						'blog_name' => $blog_details->blogname,
 						'blog_url' => $blog_details->path,
 						'privacy' => $option_privacy,
 						'current_theme' => $option_theme,
 						'admin_email' => $option_admin_email,
 						'total_users' => $result ['total_users'],
-						'site_type' => $count_active_plugins 
+						'active_plugins' => $count_active_plugins 
 				);
 			}
 			
 			$ens_site_data [] = $ens_site_row;
 		}
 		
-		restore_current_blog ();
+		restore_current_blog();
 		
+		$upload_dir = wp_upload_dir();
+		$report_dirname = $upload_dir['basedir'].'/'. NS_UPLOADS;
+		if ( ! file_exists( $report_dirname ) ) {
+    		wp_mkdir_p( $report_dirname );
+		}
+		$report_site_stats = $report_dirname . '/' . 'site-stats.csv';
+		chmod($report_site_stats,0600);
+
+		$file_site_stats = fopen($report_site_stats,"w");
+
+		foreach ($ens_site_data as $site_data) {
+    		fputcsv($file_site_stats, $site_data);
+		}
+
+		$report_plugin_stats = $report_dirname . '/' . 'plugin-stats.csv';
+		chmod($report_plugin_stats,0600);
+
+		$file_plugin_stats = fopen($report_plugin_stats,"w");
+
+		foreach ($ens_plugin_data as $plugin_data) {
+    		fputcsv($file_plugin_stats, $plugin_data);
+		}
+
+
+		fclose($file_site_stats);
+		fclose($file_plugin_stats);
+
+		echo '
+				<table border="1">
+				';
+		
+		echo '
+				<tr>
+					<td>Blog ID</td>
+					<td>Blog Name</td>
+					<td>Blog URL</td>
+					<td>Privacy</td>
+					<td>Current Theme</td>
+					<td>Admin Email</td>
+					<td>Total Users</td>
+					<td>Active Plugins</td>';
+		
+		if (Network_Stats_Helper::is_plugin_network_activated ( SSW_PLUGIN_URL )) {
+			echo '
+					<td>Site Type</td>';
+		}
+		
+		echo '
+				</tr>
+				';
+		
+		foreach ( $ens_site_data as $site_data ) {
+			echo '<tr>';
+			foreach ( $site_data as $site_data_field ) {
+				echo '<td>' . $site_data_field . '</td>';
+			}
+			echo '</tr>';
+		}
+		
+		echo '
+			</table>';
+		
+		echo '<br /><br /><br />
+					<strong>Privacy: </strong><br />
+					1 : I would like my blog to be visible to everyone, including search engines (like Google, Sphere, Technorati) and archivers. (default) <br />
+					0 : I would like to block search engines, but allow normal visitors. <br />
+					-1: Visitors must have a login - anyone that is a registered user of Web Publishing @ NYU can gain access. <br />
+					-2: Only registered users of this blogs can have access - anyone found under Users > All Users can have access. <br />
+			    	-3: Only administrators can visit - good for testing purposes before making it live. <br />
+			    ';
+		if (Network_Stats_Helper::is_plugin_network_activated ( MSP_PLUGIN_DIR )) {
+			echo '-1: Visitors must have a login - anyone that is a registered user of Web Publishing @ NYU can gain access. <br />
+						-2: Only registered users of this blogs can have access - anyone found under Users > All Users can have access. <br />
+					   	-3: Only administrators can visit - good for testing purposes before making it live. <br />
+					';
+		}
+
+		/*
 		$wpdb->query ( 'TRUNCATE table ' . $this->site_table );
 		foreach ( $ens_site_data as $site_data ) {
 			$wpdb->insert ( $this->site_table, $site_data );
 		}
+		*/
 	}
 	
+	private function get_site_stats_csvheaders() {
+		if (Network_Stats_Helper::is_plugin_network_activated ( SSW_PLUGIN_DIR )) {
+			$ens_site_row = array (
+					'blog_id' => 'blog_id',
+					'blog_name' => 'blog_name',
+					'blog_url' => 'blog_url',
+					'privacy' => 'privacy',
+					'current_theme' => 'current_theme',
+					'admin_email' => 'admin_email',
+					'total_users' => 'total_users',
+					'active_plugins' => 'active_plugins',
+					'site_type' => 'site_type' 
+			);
+		} else {
+			$ens_site_row = array (
+					'blog_id' => 'blog_id',
+					'blog_name' => 'blog_name',
+					'blog_url' => 'blog_url',
+					'privacy' => 'privacy',
+					'current_theme' => 'current_theme',
+					'admin_email' => 'admin_email',
+					'total_users' => 'total_users',
+					'active_plugins' => 'active_plugins'
+			);
+		}
+		return $ens_site_row;
+	}
 	/**
 	 * Print Site Stats from Database
 	 *

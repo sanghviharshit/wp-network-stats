@@ -34,8 +34,8 @@ class Network_Stats_Activator {
 		/**
 		 * @todo Create database tables on plugin install http://codex.wordpress.org/Creating_Tables_with_Plugins
 		 */
-		self::network_stats_install();
-		self::network_stats_install_data();
+		//self::network_stats_install();
+		//self::network_stats_install_data();
 	}
 	
 	/**

@@ -95,11 +95,13 @@ class Network_Stats_Helper {
 		} else {
 			// Fetch the list from the transient cache if available
 			$blog_list = get_site_transient( 'ns_blog_list' );
-			if ( self::use_transient !== true || $blog_list === false ) {
+			if ( self::$use_transient !== true || $blog_list === false ) {
 				$blog_list = $wpdb->get_results( "SELECT blog_id, domain FROM " . $wpdb->base_prefix . "blogs", ARRAY_A );
 	
-				// Store for one hour
-				set_transient( 'ns_blog_list', $blog_list, 3600 );
+				if(self::$use_transient) {
+					// Store for one hour
+					set_transient( 'ns_blog_list', $blog_list, 3600 );
+				}
 			}
 		}
 	
@@ -136,7 +138,10 @@ class Network_Stats_Helper {
 	 * @return	bool
 	 */
 	public static function is_plugin_network_activated($plugin) {
-	
+		// Makes sure the plugin is defined before trying to use it
+		if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
+    		require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+		}
 		return is_plugin_active_for_network($plugin);
 	}
 	
@@ -172,12 +177,15 @@ class Network_Stats_Helper {
 					}
 				}
 	
-				// Store our list of blogs
-				$ns_active_plugins[$transient_name] = $active_on;
+				if(self::$use_transient) {
 	
-				// Store for one hour
-				set_site_transient( 'ns_active_plugins', $ns_active_plugins, 3600 );
-	
+					// Store our list of blogs
+					$ns_active_plugins[$transient_name] = $active_on;
+		
+
+					// Store for one hour
+					set_site_transient( 'ns_active_plugins', $ns_active_plugins, 3600 );
+				}
 				return $active_on;
 	
 			} else {
@@ -235,6 +243,20 @@ class Network_Stats_Helper {
 	 *
 	 */
 	
+		/** 
+	 * Get list of all themes
+	 * 
+	 * @since	0.1.0
+	 * @access	public
+	 * @param 		array 			The search arguments. Optional. This array can have the key/value pairs below. Default: array( 'errors' => false , 'allowed' => null, 'blog_id' => 0 )
+	 * @return 		array 			all themes. Defaults to false.
+	 */
+	public static function get_list_all_themes($args = array()) {
+		// Get List of all themes using wp_get_themes()
+		
+		return wp_get_themes($args);
+	}
+
 	/**
 	 * Determine if the given theme is active on a list of blogs
 	 *
@@ -256,7 +278,7 @@ class Network_Stats_Helper {
 			}
 			$transient_name = self::get_transient_friendly_name( $theme_key );
 	
-			if ( self::use_transient !== true || ! array_key_exists( $transient_name, $ns_active_themes ) ) {
+			if ( self::$use_transient !== true || ! array_key_exists( $transient_name, $ns_active_themes ) ) {
 				// We're either not using or don't have the transient index
 				$active_on = array();
 	
@@ -324,7 +346,7 @@ class Network_Stats_Helper {
 	}
 	
 	/**
-	 * Get the active theme for a single blog
+	 * Get the active theme name for a single blog
 	 *
 	 * @since    0.1.0
 	 * @access   public

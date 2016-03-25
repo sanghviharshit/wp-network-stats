@@ -90,11 +90,6 @@ The `assets` directory contains three files.
 
 When committing code to the WordPress Plugin Repository, all of the banner, icon, and screenshot should be placed in the `assets` directory of the Repository, and the core code should be placed in the `trunk` directory.
 
-# Credits
-
-The __WP Network Stats__ plugin code was inspired or has used code from the following plugins.
-1. [Network Plugin Auditor](https://wordpress.org/plugins/network-plugin-auditor/)
-2. [WordPress Charts](https://wordpress.org/plugins/wp-charts/)
 
 ## Documentation, FAQs, and More
 
