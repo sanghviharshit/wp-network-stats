@@ -127,6 +127,17 @@ class Network_Stats {
 		 * The class responsible for defining all functions related to plugin stats.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-plugin-stats-admin.php';
+
+		/**
+		 * The class responsible for defining all functions related to user stats.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-user-stats-admin.php';
+
+		/**
+		 * The class responsible for defining all functions related to theme stats.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-theme-stats-admin.php';
+
 		
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -181,7 +192,22 @@ class Network_Stats {
 		$this->loader->add_action( 'network_admin_edit_ns_options', $plugin_admin, 'ns_options_process' );
 		
 		/* Add action to run when cron job fires */
-		$this->loader->add_action( 'cron_generate_reports', $plugin_admin, 'generate_reports' );
+		$this->loader->add_action( 'cron_generate_reports', $plugin_admin, 'generate_reports', 10, 3 );
+		
+		/* Add action to run refresh_site_stats with limit and offset when cron job fires */
+		$this->loader->add_action( 'cron_refresh_site_stats', $plugin_admin, 'refresh_site_stats');
+
+		/* Add action to run refresh_plugin_stats with limit and offset when cron job fires */
+		$this->loader->add_action( 'cron_refresh_plugin_stats', $plugin_admin, 'refresh_plugin_stats');
+
+		/* Add action to run refresh_user_stats with limit and offset when cron job fires */
+		$this->loader->add_action( 'cron_refresh_user_stats', $plugin_admin, 'refresh_user_stats');
+
+		/* Add action to run refresh_theme_stats with limit and offset when cron job fires */
+		$this->loader->add_action( 'cron_refresh_theme_stats', $plugin_admin, 'refresh_theme_stats');
+
+		/* Add action to run refresh_site_stats with limit and offset when cron job fires */
+		$this->loader->add_action( 'cron_send_notification_email', $plugin_admin, 'send_notification_email', 10, 1);
 		
 	}
 

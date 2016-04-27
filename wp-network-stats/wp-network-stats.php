@@ -81,11 +81,15 @@ define( 'NS_URL', plugin_dir_url( __FILE__ ) );
 define( 'NS_SETTINGS', plugin_basename( __FILE__ ) );
 define( 'NS_SETTINGS_SECTION', plugin_basename( __FILE__ ) );
 define( 'NS_UPLOADS', 'ns_uploads' );
+define( 'NS_REPORT_DIRNAME', wp_upload_dir()['basedir'].'/'.NS_UPLOADS);
+
 
 //define( 'SSW_PLUGIN_DIR', 'nsd_ssw/ssw.php' );
 //define( 'MSP_PLUGIN_DIR', 'sitewide-privacy-options/sitewide-privacy-options.php' );
 define( 'NS_SITE_TABLE', 'ns_site_stats' );
 define( 'NS_PLUGIN_TABLE', 'ns_plugin_stats' );
+define( 'NS_USER_TABLE', 'ns_user_stats' );
+define( 'NS_THEME_TABLE', 'ns_theme_stats' );
 //define( 'SSW_TABLE_NAME', 'ssw_main_nsd' );
 
 

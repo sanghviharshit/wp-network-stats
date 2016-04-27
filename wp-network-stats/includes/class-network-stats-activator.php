@@ -30,7 +30,10 @@ class Network_Stats_Activator {
 	 * @since    0.0.1
 	 */
 	public static function activate() {
-		
+		if ( ! file_exists( NS_REPORT_DIRNAME ) ) {
+			wp_mkdir_p( NS_REPORT_DIRNAME );
+		}
+
 		/**
 		 * @todo Create database tables on plugin install http://codex.wordpress.org/Creating_Tables_with_Plugins
 		 */

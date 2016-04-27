@@ -55,7 +55,7 @@ class Plugin_Stats_Admin {
 	 *
 	 * @since 0.1.0
 	 */
-	public function refresh_plugin_stats() {
+	public function refresh_plugin_stats($print = false) {
 		global $wpdb;
 		
 		$all_plugins = Network_Stats_Helper::get_list_all_plugins ();
@@ -68,120 +68,110 @@ class Plugin_Stats_Admin {
 		 * $ns_plugin_row = array("Plugin", "Number of Sites");
 		 * $ns_plugin_data[] = $ns_plugin_row;
 		 */
+		$plugin_update_info = array();
+		$plugin_update_needed = Network_Stats_Helper::plugins_update_check($plugin_update_info);
 		
+		$ns_plugin_row = self::get_plugin_stats_csvheaders();
+		$ns_plugin_data [] = $ns_plugin_row;
+
 		foreach ( $all_plugins as $plugin_file => $plugin_data ) {
 			$active_on_network = Network_Stats_Helper::is_plugin_network_activated ( $plugin_file );
-			
-			if ($active_on_network) {
-				// We don't need to check any further for network active plugins
-				$ns_plugin_row = array (
-						'plugin' => $plugin_data ['Title'],
-						'total_sites' => "Network Activated" 
-				);
-			} else {
-				// Is this plugin Active on any blogs in this network?
-				$active_on_blogs = Network_Stats_Helper::is_plugin_active_on_blogs ( $plugin_file );
-				if (is_array ( $active_on_blogs )) {
-					$count_blogs_plugin_is_active = count ( $active_on_blogs );
-					$ns_plugin_row = array (
-							'plugin' => $plugin_data ['Title'],
-							'total_sites' => $count_blogs_plugin_is_active 
-					);
-					
-					/** 
-					 * @todo List all the sites the plugin is active on.
-					 * Loop through the blog list, gather details and append them to the output string
-					 * foreach ( $active_on_blogs as $blog_id ) {
-					 * $blog_id = trim( $blog_id );
-					 * if ( ! isset( $blog_id ) || $blog_id == '' ) {
-					 * continue;
-					 * }
-					 *
-					 * $blog_details = get_blog_details( $blog_id, true );
-					 *
-					 * if ( isset( $blog_details->siteurl ) && isset( $blog_details->blogname ) ) {
-					 * $blog_url = $blog_details->siteurl;
-					 * $blog_name = $blog_details->blogname;
-					 *
-					 * //$output .= '<li><nobr><a title="' . esc_attr( __( 'Manage plugins on ', 'npa' ) . $blog_name ) .'" href="'.esc_url( $blog_url ).'/wp-admin/plugins.php">' . esc_html( $blog_name ) . '</a></nobr></li>';
-					 * }
-					 *
-					 * unset( $blog_details );
-					 * }
-					 */
+			$update_available = false;
+			$new_version = '';
+			if(isset($plugin_update_info[$plugin_file])) {
+				$update_available = true;
+				$new_version = $plugin_update_info[$plugin_file]->new_version;
+				$last_updated = '';
+				/*
+				if(isset($plugin_update_info[$plugin_file]->last_updated)) {
+					$last_updated = $plugin_update_info[$plugin_file]->last_updated;
 				}
+				*/
 			}
+			
+
+			$ns_plugin_row = array (
+				'plugin_file' => $plugin_file,
+				'name' => $plugin_data['Name'],
+				//'title' => $plugin_data['Title'],
+				'description' => $plugin_data['Description'],
+				'author' => $plugin_data['Author'],
+				'author_uri' => $plugin_data['AuthorURI'],
+				'plugin_uri' => $plugin_data['PluginURI'],
+				//'textdomain' => $plugin_data['TextDomain'],
+				//'domainpath' => $plugin_data['DomainPath'],
+				'network_only' => $plugin_data['Network'] ? 'yes':'no',
+				'network_active' => $active_on_network ? 'yes':'no',
+				'version' => $plugin_data['Version'],
+				'new_version' => $new_version,
+				'update_available' => $update_available ? 'yes' : '',
+				'last_updated' =>  $last_updated
+			);
 			
 			$ns_plugin_data [] = $ns_plugin_row;
 		}
 		
-		/*
-		$wpdb->query ( 'TRUNCATE table ' . $this->plugin_table );
-		
-		foreach ( $ns_plugin_data as $plugin_data ) {
-			$wpdb->insert ( $this->plugin_table, $plugin_data );
-		}
-		*/
+		//$upload_dir = wp_upload_dir();
+		//var_dump($upload_dir);
+		//$report_dirname = $upload_dir['basedir'].'/'. NS_UPLOADS;
+		$report_dirname = NS_REPORT_DIRNAME;
+		//echo NS_REPORT_DIRNAME;
+		// if ( ! file_exists( $report_dirname ) ) {
+  //   		wp_mkdir_p( $report_dirname );
+		// }
+		$report_plugin_stats = $report_dirname . '/' . 'plugin-stats.csv';
+		chmod($report_plugin_stats,0644);
 
-		echo '
-				<table border="1">
-				';
-		
-		echo '
-				<tr>
-					<td>Plugin</td>
-					<td>Number of Sites</td>
-				</tr>';
-		
+		$file_plugin_stats = fopen($report_plugin_stats,"w");
+
 		foreach ($ns_plugin_data as $plugin_data) {
-			echo '<tr>';
-			foreach ($plugin_data as $plugin_data_field) {
-				echo '<td>' . $plugin_data_field . '</td>';
-			}
-			echo '</tr>';
+    		fputcsv($file_plugin_stats, $plugin_data);
 		}
-		
-		echo '
-			</table>';
+
+		fclose($file_plugin_stats);
+
+		if($print) {
+			self::print_plugin_stats($ns_plugin_data);
+		}
+
 		
 	}
-	
+
+
+	private function get_plugin_stats_csvheaders() {
+		$ns_plugin_row = array (
+			'plugin_file' => 'plugin_file',
+			'name' => 'plugin_name',
+			//'title' => 'title',
+			'description' => 'description',
+			'author' => 'author',
+			'author_uri' => 'author_uri',
+			'plugin_uri' => 'plugin_uri',
+			//'textdomain' => 'textdomain',
+			//'domainpath' => 'domainpath',
+			'network_only' => 'network_only',
+			'network_active' => 'network_active',
+			'version' => 'version',
+			'new_version' => 'new_version',
+			'update_available' => 'update_available',
+			'last_updated' => 'last_updated'
+		);
+		return $ns_plugin_row;
+	}
+
 	/**
-	 * Print Plugin Stats from Database
+	 * Print Plugin Stats
 	 *
 	 * @since 0.1.0
 	 */
-	public function print_plugin_stats() {
+	public function print_plugin_stats($ns_plugin_data) {
 		global $wpdb;
 
 		echo '<H1>Plugin Stats</H1><br/>';
 		
-		$plugin_stats_query = "
-				SELECT `plugin`, `total_sites`
-				FROM " . $this->plugin_table;
-		
-		$ns_plugin_data_in_db = $wpdb->get_results ( $plugin_stats_query );
-		
-		if ($ns_plugin_data_in_db) {
-			foreach ( $ns_plugin_data_in_db as $ns_plugin_row ) {
-				$ns_plugin_data [] = $ns_plugin_row;
-			}
-		}
-		
-		else {
-			echo 'There is no data to display';
-			exit ();
-		}
-		
 		echo '
 				<table border="1">
 				';
-		
-		echo '
-				<tr>
-					<td>Plugin</td>
-					<td>Number of Sites</td>
-				</tr>';
 		
 		foreach ($ns_plugin_data as $plugin_data) {
 			echo '<tr>';
