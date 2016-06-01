@@ -646,7 +646,7 @@ class Network_Stats_Helper {
 		do_action( "wp_update_themes" ); // force WP to check for theme updates
 		$update_themes = get_site_transient( 'update_themes' ); // get information of updates
 		if ( !empty( $update_themes->response ) ) { // any theme updates available?
-			$theme_update_info = $update_themes->response; // themes that need updating
+			$themes_need_update = $update_themes->response; // themes that need updating
 			
 			if ( count( $themes_need_update ) >= 1 ) { // any themes need updating after all the filtering gone on above?
 				/*

@@ -184,13 +184,14 @@ class Network_Stats {
 
 		/* Add action to whitelist options that the form is able to save. */
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
-		
-		/* Add action to display Export menu item in Network Admin's Dashboard */
-		$this->loader->add_action( 'network_admin_menu', $plugin_admin, 'register_menu' );
 
 		/* Add action to process options form data */
-		$this->loader->add_action( 'network_admin_edit_ns_options', $plugin_admin, 'ns_options_process' );
+		$this->loader->add_action( 'network_admin_edit_' . NS_OPTIONS_SETTINGS, $plugin_admin, 'ns_options_settings' );
+		$this->loader->add_action( 'network_admin_edit_' . NS_OPTIONS_GENERATE, $plugin_admin, 'ns_options_generate' );
 		
+		/* Add action to display the menu items in Network Admin's Dashboard */
+		$this->loader->add_action( 'network_admin_menu', $plugin_admin, 'register_menu' );
+
 		/* Add action to run when cron job fires */
 		$this->loader->add_action( 'cron_generate_reports', $plugin_admin, 'generate_reports', 10, 3 );
 		

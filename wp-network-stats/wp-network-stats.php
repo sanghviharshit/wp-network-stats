@@ -78,10 +78,24 @@ define( 'NS_VERSION', '0.2.0' );
 define( 'NS_PLUGIN', plugin_basename( __FILE__ ) );
 define( 'NS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'NS_URL', plugin_dir_url( __FILE__ ) );
-define( 'NS_SETTINGS', plugin_basename( __FILE__ ) );
-define( 'NS_SETTINGS_SECTION', plugin_basename( __FILE__ ) );
+
+define( 'NS_OPTIONS', 'ns_options');
+define( 'NS_OPTIONS_SETTINGS', 'ns_options_settings');
+define( 'NS_OPTIONS_GENERATE', 'ns_options_generate');
+
+define( 'NS_OPTIONS_GROUP', 'ns_options_group');
+define( 'NS_PAGE_SETTINGS', 'ns_settings' );
+//define( 'NS_SETTINGS_PAGE', NS_SETTINGS_PAGE . '_batch');
+define( 'NS_PAGE_GENERATE', 'ns_settings_generate');
+
+define( 'NS_SECTION_GENERAL', 'ns_section_general');
+define( 'NS_SECTION_GENERATE', 'ns_section_generate');
+define( 'NS_SECTION_NOTIFICATION', 'ns_section_notification');
+define( 'NS_SECTION_BATCH', 'ns_section_batch');
+define( 'NS_SECTION_STATS_SELECTION', 'ns_section_stats_selection');
+
 define( 'NS_UPLOADS', 'ns_uploads' );
-define( 'NS_REPORT_DIRNAME', wp_upload_dir()['basedir'].'/'.NS_UPLOADS);
+define( 'NS_REPORT_DIRNAME', wp_upload_dir()['basedir'] . '/' . NS_UPLOADS);
 
 
 //define( 'SSW_PLUGIN_DIR', 'nsd_ssw/ssw.php' );

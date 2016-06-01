@@ -99,15 +99,7 @@ class Site_Stats_Admin {
 			}
 		*/
 
-		$ns_site_row = self::get_site_stats_csvheaders();
-		$ns_site_data [] = $ns_site_row;
 
-		$ns_plugin_data_per_site_row = array('blog_id', 'plugin_file', 'plugin_name');
-		$ns_plugin_data_per_site [] = $ns_plugin_data_per_site_row;
-
-		$ns_user_data_per_site_row = array('blog_id', 'user_id', 'user_role', 'comments_count');
-		$ns_user_data_per_site [] = $ns_user_data_per_site_row;
-			
 		$report_dirname = NS_REPORT_DIRNAME;
 		
 		$report_site_stats = $report_dirname . '/' . 'site-stats.csv';
@@ -128,9 +120,21 @@ class Site_Stats_Admin {
 		chmod($report_user_stats_per_site,0644);
 
 		if( $args['offset'] == 0 ) {
+			// Add headers
+			$ns_site_row = self::get_site_stats_csvheaders();
+			$ns_site_data [] = $ns_site_row;
+
+			$ns_plugin_data_per_site_row = array('blog_id', 'plugin_file', 'plugin_name');
+			$ns_plugin_data_per_site [] = $ns_plugin_data_per_site_row;
+
+			$ns_user_data_per_site_row = array('blog_id', 'user_id', 'user_role', 'comments_count');
+			$ns_user_data_per_site [] = $ns_user_data_per_site_row;
+			
+			/*
 			fputcsv($file_site_stats, $ns_site_row);
 			fputcsv($file_plugin_stats_per_site, $ns_plugin_data_per_site_row);
 			fputcsv($file_user_stats_per_site, $ns_user_data_per_site_row);
+			*/
 		}
 		
     // Increase maximum execution time to prevent "Maximum execution time exceeded" error ##
@@ -169,10 +173,23 @@ class Site_Stats_Admin {
 			switch_to_blog ( $blog['blog_id']);
 
 			// check if we're hitting any Memory limits, if so flush them out ##
-            // per http://wordpress.org/support/topic/how-to-exporting-a-lot-of-data-out-of-memory-issue?replies=2
+      // per http://wordpress.org/support/topic/how-to-exporting-a-lot-of-data-out-of-memory-issue?replies=2
 			if ( memory_get_usage( true ) > $memory_limit ) {
-                wp_cache_flush();
-            }
+        wp_cache_flush();
+    		foreach ($ns_site_data as $site_data) {
+		    	fputcsv($file_site_stats, $site_data);
+				}
+				foreach ($ns_plugin_data_per_site as $plugin_data_per_site) {
+    			fputcsv($file_plugin_stats_per_site, $plugin_data_per_site);
+				}
+				foreach ($ns_user_data_per_site as $user_data_per_site) {
+    			fputcsv($file_user_stats_per_site, $user_data_per_site);
+				}
+				$ns_site_data = array();
+				$ns_plugin_data_per_site = array ();
+				$ns_user_data_per_site = array ();
+
+      }
 
 			$result = count_users ();
 			
@@ -207,8 +224,8 @@ class Site_Stats_Admin {
 				 */
 				
 				$ns_plugin_data_per_site_row = array($blog['blog_id'], $plugin_file, $plugin_data_per_site ['Name']);
-				//$ns_plugin_data_per_site []= $ns_plugin_data_per_site_row;
-				fputcsv($file_plugin_stats_per_site, $ns_plugin_data_per_site_row);
+				$ns_plugin_data_per_site []= $ns_plugin_data_per_site_row;
+				//fputcsv($file_plugin_stats_per_site, $ns_plugin_data_per_site_row);
 			}
 
 			/** @var array Array of WP_User objects. */
@@ -230,8 +247,8 @@ class Site_Stats_Admin {
 					$roles .= $role;
 				}
 				$ns_user_data_per_site_row = array($blog['blog_id'], $user->ID, $roles, $comments_count);
-				//$ns_user_data_per_site[] = $ns_user_data_per_site_row; 
-				fputcsv($file_user_stats_per_site, $ns_user_data_per_site_row);
+				$ns_user_data_per_site[] = $ns_user_data_per_site_row; 
+				//fputcsv($file_user_stats_per_site, $ns_user_data_per_site_row);
 
 			}
 
@@ -330,8 +347,8 @@ class Site_Stats_Admin {
 			);
 			//var_dump($ns_site_row);
 
-			//$ns_site_data [] = $ns_site_row;
-			fputcsv($file_site_stats, $ns_site_row);
+			$ns_site_data [] = $ns_site_row;
+			//fputcsv($file_site_stats, $ns_site_row);
 			//Have to call everytime switch_to_blog() is called - https://codex.wordpress.org/Function_Reference/switch_to_blog
 			restore_current_blog();
 		}
@@ -344,29 +361,31 @@ class Site_Stats_Admin {
 		chmod($report_site_stats,0600);
 
 		$file_site_stats = fopen($report_site_stats,"w");
-
+		*/
+	
 		foreach ($ns_site_data as $site_data) {
     		fputcsv($file_site_stats, $site_data);
 		}
-
+		/*
+		
 		$report_plugin_stats_per_site = $report_dirname . '/' . 'plugin-stats-per-site.csv';
 		chmod($report_plugin_stats_per_site,0600);
 
 		$file_plugin_stats_per_site = fopen($report_plugin_stats_per_site,"w");
-
+		*/
 		foreach ($ns_plugin_data_per_site as $plugin_data_per_site) {
     		fputcsv($file_plugin_stats_per_site, $plugin_data_per_site);
 		}
-
+		/*
 		$report_user_stats_per_site = $report_dirname . '/' . 'user-stats-per-site.csv';
 		chmod($report_user_stats,0600);
 
 		$file_user_stats_per_site = fopen($report_user_stats_per_site,"w");
-
+		*/
 		foreach ($ns_user_data_per_site as $user_data_per_site) {
     		fputcsv($file_user_stats_per_site, $user_data_per_site);
 		}
-		*/
+		
 
 
 		fclose($file_site_stats);
