@@ -127,6 +127,17 @@ class Network_Stats {
 		 * The class responsible for defining all functions related to plugin stats.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-plugin-stats-admin.php';
+
+		/**
+		 * The class responsible for defining all functions related to user stats.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-user-stats-admin.php';
+
+		/**
+		 * The class responsible for defining all functions related to theme stats.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-theme-stats-admin.php';
+
 		
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -167,13 +178,44 @@ class Network_Stats {
 
 		$plugin_admin = new Network_Stats_Admin( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		
-		/* Add action to display Export menu item in Network Admin's Dashboard */
-		$this->loader->add_action( 'network_admin_menu', $plugin_admin, 'register_menu' );
-		
 
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles', 10, 1 );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts', 10, 1 );
+
+		/* Add action to whitelist options that the form is able to save. */
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
+
+		/** Add settings to Network Settings
+		 * http://zao.is/2013/07/adding-settings-to-network-settings-for-wordpress-multisite
+		 */
+		//$this->loader->add_filter( 'wpmu_options', $plugin_admin, 'show_network_settings' );
+		//$this->loader->add_action( 'update_wpmu_options', $plugin_admin, 'save_network_settings' );
+
+		/* Add action to process options form data */
+		$this->loader->add_action( 'network_admin_edit_' . NS_OPTIONS_SETTINGS, $plugin_admin, 'ns_options_settings' );
+		$this->loader->add_action( 'network_admin_edit_' . NS_OPTIONS_GENERATE, $plugin_admin, 'ns_options_generate' );
+		
+		/* Add action to display the menu items in Network Admin's Dashboard */
+		$this->loader->add_action( 'network_admin_menu', $plugin_admin, 'register_menu' );
+
+		/* Add action to run when cron job fires */
+		$this->loader->add_action( 'cron_generate_reports', $plugin_admin, 'generate_reports', 10, 3 );
+		
+		/* Add action to run refresh_site_stats with limit and offset when cron job fires */
+		$this->loader->add_action( 'cron_refresh_site_stats', $plugin_admin, 'refresh_site_stats');
+
+		/* Add action to run refresh_plugin_stats with limit and offset when cron job fires */
+		$this->loader->add_action( 'cron_refresh_plugin_stats', $plugin_admin, 'refresh_plugin_stats');
+
+		/* Add action to run refresh_user_stats with limit and offset when cron job fires */
+		$this->loader->add_action( 'cron_refresh_user_stats', $plugin_admin, 'refresh_user_stats');
+
+		/* Add action to run refresh_theme_stats with limit and offset when cron job fires */
+		$this->loader->add_action( 'cron_refresh_theme_stats', $plugin_admin, 'refresh_theme_stats');
+
+		/* Add action to run refresh_site_stats with limit and offset when cron job fires */
+		$this->loader->add_action( 'cron_send_notification_email', $plugin_admin, 'send_notification_email', 10, 1);
+		
 	}
 
 	/**
