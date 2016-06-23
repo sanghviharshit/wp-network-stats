@@ -30,9 +30,12 @@ class Network_Stats_Activator {
 	 * @since    0.0.1
 	 */
 	public static function activate() {
+
 		if ( ! file_exists( NS_REPORT_DIRNAME ) ) {
 			wp_mkdir_p( NS_REPORT_DIRNAME );
 		}
+		self::maybe_upgrade();
+		update_site_option( 'wp_network_stats_version', NS_VERSION );
 
 		/**
 		 * @todo Create database tables on plugin install http://codex.wordpress.org/Creating_Tables_with_Plugins
@@ -105,6 +108,30 @@ class Network_Stats_Activator {
 		/**
 		 * @todo insert init data
 		 */
+	}
+
+	/**
+	 * Check if the db needs and upgrade.
+	 *
+     */
+	private static function maybe_upgrade()
+	{
+		$current_network_version = get_site_option( 'wp_network_stats_version' );
+
+		if ( $current_network_version == NS_VERSION )
+			return;
+
+		if ( $current_network_version === false ) {
+			return;
+		}
+
+		do_action( 'wp_network_stats_upgrade', $current_network_version, NS_VERSION );
+
+		// Do the actual upgrade here
+		//
+
+		update_site_option( 'wp_network_stats_version', NS_VERSION );
+
 	}
 
 }

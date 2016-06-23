@@ -75,6 +75,19 @@ class Network_Stats_Helper {
 	 * @access   public
 	 * @param		int		$blog_id	Blog ID.
 	 * @return    array 	list of the blogs.
+	 * 			e.g.
+	  			[blog_id] => 13
+				[site_id] => 1
+				[domain] => localhost
+				[path] => /wptest/test12/
+				[registered] => 2016-05-20 02:03:55
+				[last_updated] => 2016-05-20 02:03:55
+				[public] => 1
+				[archived] => 0
+				[mature] => 0
+				[spam] => 0
+				[deleted] => 0
+				[lang_id] => 0
 	 */
 	public static function get_network_blog_list($args = array()) {
 		global $wpdb;
@@ -716,6 +729,15 @@ class Network_Stats_Helper {
         }
 
         return $val;
+    }
+
+    public static function validate_email($email) {
+    	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			  //echo "This ($email_a) email address is considered valid.";
+				return true;  
+			} else {
+				return false;
+			}
     }
 
     public static function write_log ( $log )  {

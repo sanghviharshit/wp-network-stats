@@ -113,12 +113,6 @@ class Theme_Stats_Admin {
 		}
 
 		fclose($file_theme_stats);
-
-		if($print) {
-			self::print_theme_stats($ns_theme_data);
-		}
-
-		
 	}
 
 
@@ -140,33 +134,5 @@ class Theme_Stats_Admin {
 			'update_available' => 'update_available'
 		);
 		return $ns_theme_row;
-	}
-
-	/**
-	 * Print Theme Stats
-	 *
-	 * @since 0.1.0
-	 */
-	public function print_theme_stats($ns_theme_data) {
-		global $wpdb;
-
-		echo '<H1>Theme Stats</H1><br/>';
-		
-		echo '
-				<table border="1">
-				';
-		
-		foreach ($ns_theme_data as $theme_data) {
-			echo '<tr>';
-			foreach ($theme_data as $theme_data_field) {
-				echo '<td>' . $theme_data_field . '</td>';
-			}
-			echo '</tr>';
-		}
-		
-		echo '
-			</table>';
-		
-
 	}
 }

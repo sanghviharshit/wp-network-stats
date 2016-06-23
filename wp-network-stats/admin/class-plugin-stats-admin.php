@@ -55,7 +55,7 @@ class Plugin_Stats_Admin {
 	 *
 	 * @since 0.1.0
 	 */
-	public function refresh_plugin_stats($print = false) {
+	public function refresh_plugin_stats() {
 		global $wpdb;
 		
 		$all_plugins = Network_Stats_Helper::get_list_all_plugins ();
@@ -81,6 +81,7 @@ class Plugin_Stats_Admin {
 			if(isset($plugin_update_info[$plugin_file])) {
 				$update_available = true;
 				$new_version = $plugin_update_info[$plugin_file]->new_version;
+				Network_Stats_Helper::write_log($plugin_update_info[$plugin_file]);
 				$last_updated = '';
 				/*
 				if(isset($plugin_update_info[$plugin_file]->last_updated)) {
@@ -105,7 +106,7 @@ class Plugin_Stats_Admin {
 				'version' => $plugin_data['Version'],
 				'new_version' => $new_version,
 				'update_available' => $update_available ? 'yes' : '',
-				'last_updated' =>  $last_updated
+				//'last_updated' =>  $last_updated
 			);
 			
 			$ns_plugin_data [] = $ns_plugin_row;
@@ -120,21 +121,14 @@ class Plugin_Stats_Admin {
   //   		wp_mkdir_p( $report_dirname );
 		// }
 		$report_plugin_stats = $report_dirname . '/' . 'plugin-stats.csv';
-		chmod($report_plugin_stats,0644);
-
 		$file_plugin_stats = fopen($report_plugin_stats,"w");
+		chmod($report_plugin_stats,0644);
 
 		foreach ($ns_plugin_data as $plugin_data) {
     		fputcsv($file_plugin_stats, $plugin_data);
 		}
 
 		fclose($file_plugin_stats);
-
-		if($print) {
-			self::print_plugin_stats($ns_plugin_data);
-		}
-
-		
 	}
 
 
@@ -154,36 +148,9 @@ class Plugin_Stats_Admin {
 			'version' => 'version',
 			'new_version' => 'new_version',
 			'update_available' => 'update_available',
-			'last_updated' => 'last_updated'
+			//'last_updated' => 'last_updated'
 		);
 		return $ns_plugin_row;
 	}
 
-	/**
-	 * Print Plugin Stats
-	 *
-	 * @since 0.1.0
-	 */
-	public function print_plugin_stats($ns_plugin_data) {
-		global $wpdb;
-
-		echo '<H1>Plugin Stats</H1><br/>';
-		
-		echo '
-				<table border="1">
-				';
-		
-		foreach ($ns_plugin_data as $plugin_data) {
-			echo '<tr>';
-			foreach ($plugin_data as $plugin_data_field) {
-				echo '<td>' . $plugin_data_field . '</td>';
-			}
-			echo '</tr>';
-		}
-		
-		echo '
-			</table>';
-		
-
-	}
 }

@@ -177,13 +177,19 @@ class Network_Stats {
 	private function define_admin_hooks() {
 
 		$plugin_admin = new Network_Stats_Admin( $this->get_plugin_name(), $this->get_version() );
-		
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles', 10, 1 );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts', 10, 1 );
 
 		/* Add action to whitelist options that the form is able to save. */
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
+
+		/** Add settings to Network Settings
+		 * http://zao.is/2013/07/adding-settings-to-network-settings-for-wordpress-multisite
+		 */
+		//$this->loader->add_filter( 'wpmu_options', $plugin_admin, 'show_network_settings' );
+		//$this->loader->add_action( 'update_wpmu_options', $plugin_admin, 'save_network_settings' );
 
 		/* Add action to process options form data */
 		$this->loader->add_action( 'network_admin_edit_' . NS_OPTIONS_SETTINGS, $plugin_admin, 'ns_options_settings' );

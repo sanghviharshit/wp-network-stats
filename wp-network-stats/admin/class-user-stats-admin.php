@@ -65,7 +65,7 @@ class User_Stats_Admin {
 				
 		$ns_user_row = self::get_user_stats_csvheaders();
 		$ns_user_data [] = $ns_user_row;
-			
+
 		foreach ( $users as $user) {
 			// For fields in usermeta table - https://codex.wordpress.org/Function_Reference/get_userdata
 			$userdata = get_userdata( $user->ID );
@@ -83,17 +83,14 @@ class User_Stats_Admin {
 				'spam' => $user->spam,
 				'deleted' => $user->deleted
 			);
-			
 			$ns_user_data [] = $ns_user_row;
 		}
 
 		$report_dirname = NS_REPORT_DIRNAME;
 		
 		$report_user_stats = $report_dirname . '/' . 'user-stats.csv';
-		chmod($report_user_stats,0644);
-
 		$file_user_stats = fopen($report_user_stats,"w");
-
+		chmod($report_user_stats,0644);
 		foreach ($ns_user_data as $user_data) {
     		fputcsv($file_user_stats, $user_data);
 		}
@@ -120,33 +117,5 @@ class User_Stats_Admin {
 			'deleted' => 'deleted'
 		);
 		return $ns_user_row;
-	}
-
-	/**
-	 * Print User Stats
-	 *
-	 * @since 0.1.0
-	 */
-	public function print_user_stats($ns_user_data) {
-		global $wpdb;
-
-		echo '<H1>User Stats</H1><br/>';
-		
-		echo '
-				<table border="1">
-				';
-		
-		foreach ($ns_user_data as $user_data) {
-			echo '<tr>';
-			foreach ($user_data as $user_data_field) {
-				echo '<td>' . $user_data_field . '</td>';
-			}
-			echo '</tr>';
-		}
-		
-		echo '
-			</table>';
-		
-
 	}
 }

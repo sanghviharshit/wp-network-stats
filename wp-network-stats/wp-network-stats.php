@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       WP Network Stats
  * Plugin URI:        https://github.com/sanghviharshit/
- * Description:       View/Export useful network information (e.g. #sites/user, #sites/theme, #sites/plugin, privacy settings, etc) of all the sites in a WordPress multisite network. 
+ * Description:       View/Export useful network statistics related to sites, users per site, plugins per site, themes and plugins for all the sites in a WordPress multisite network.
  * Version:           0.0.1
  * Author:            Harshit Sanghvi
  * Author URI:        http://about.me/harshit
@@ -23,6 +23,7 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       network-stats
  * Domain Path:       /languages
+ * Network:			  True
  */
 
 // If this file is called directly, abort.
@@ -72,39 +73,69 @@ function run_network_stats() {
 	$plugin->run();
 
 }
+/**
+ * Define the defines.
+ * These defines are used later for various reasons.
+ *
+ */
+function set_globals() {
+	if ( ! defined( 'NS_VERSION' ) )
+		define( 'NS_VERSION', '0.0.2' );
+	if ( ! defined( 'NS_PLUGIN' ) )
+		define( 'NS_PLUGIN', plugin_basename( __FILE__ ) );
+	if ( ! defined( 'NS_DIR' ) )
+		define( 'NS_DIR', plugin_dir_path( __FILE__ ) );
+	if ( ! defined( 'NS_URL' ) )
+		define( 'NS_URL', plugin_dir_url( __FILE__ ) );
 
-// These defines are used later for various reasons.
-define( 'NS_VERSION', '0.2.0' );
-define( 'NS_PLUGIN', plugin_basename( __FILE__ ) );
-define( 'NS_DIR', plugin_dir_path( __FILE__ ) );
-define( 'NS_URL', plugin_dir_url( __FILE__ ) );
+	if ( ! defined( 'NS_OPTIONS' ) )
+		define( 'NS_OPTIONS', 'ns_options');
+	if ( ! defined( 'NS_OPTIONS_SETTINGS' ) )
+		define( 'NS_OPTIONS_SETTINGS', 'ns_options_settings');
+	if ( ! defined( 'NS_OPTIONS_GENERATE' ) )
+		define( 'NS_OPTIONS_GENERATE', 'ns_options_generate');
+	if ( ! defined( 'NS_CURRENT_STATUS' ) )
+		define( 'NS_CURRENT_STATUS', 'ns_current_status');
 
-define( 'NS_OPTIONS', 'ns_options');
-define( 'NS_OPTIONS_SETTINGS', 'ns_options_settings');
-define( 'NS_OPTIONS_GENERATE', 'ns_options_generate');
+	if ( ! defined( 'NS_OPTIONS_GROUP' ) )
+		define( 'NS_OPTIONS_GROUP', 'ns_options_group');
+	if ( ! defined( 'NS_PAGE_SETTINGS' ) )
+		define( 'NS_PAGE_SETTINGS', 'ns_settings' );
+	//define( 'NS_SETTINGS_PAGE', NS_SETTINGS_PAGE . '_batch');
+	if ( ! defined( 'NS_PAGE_GENERATE' ) )
+		define( 'NS_PAGE_GENERATE', 'ns_settings_generate');
 
-define( 'NS_OPTIONS_GROUP', 'ns_options_group');
-define( 'NS_PAGE_SETTINGS', 'ns_settings' );
-//define( 'NS_SETTINGS_PAGE', NS_SETTINGS_PAGE . '_batch');
-define( 'NS_PAGE_GENERATE', 'ns_settings_generate');
+	if ( ! defined( 'NS_SECTION_GENERAL' ) )
+		define( 'NS_SECTION_GENERAL', 'ns_section_general');
+	if ( ! defined( 'NS_SECTION_GENERATE' ) )
+		define( 'NS_SECTION_GENERATE', 'ns_section_generate');
+	if ( ! defined( 'NS_SECTION_NOTIFICATION' ) )
+		define( 'NS_SECTION_NOTIFICATION', 'ns_section_notification');
+	if ( ! defined( 'NS_SECTION_BATCH' ) )
+		define( 'NS_SECTION_BATCH', 'ns_section_batch');
+	if ( ! defined( 'NS_SECTION_STATS_SELECTION' ) )
+		define( 'NS_SECTION_STATS_SELECTION', 'ns_section_stats_selection');
 
-define( 'NS_SECTION_GENERAL', 'ns_section_general');
-define( 'NS_SECTION_GENERATE', 'ns_section_generate');
-define( 'NS_SECTION_NOTIFICATION', 'ns_section_notification');
-define( 'NS_SECTION_BATCH', 'ns_section_batch');
-define( 'NS_SECTION_STATS_SELECTION', 'ns_section_stats_selection');
+	if ( ! defined( 'NS_UPLOADS' ) )
+		define( 'NS_UPLOADS', 'ns_uploads' );
+	if ( ! defined( 'NS_REPORT_DIRNAME' ) )
+		define( 'NS_REPORT_DIRNAME', wp_upload_dir()['basedir'] . '/' . NS_UPLOADS);
 
-define( 'NS_UPLOADS', 'ns_uploads' );
-define( 'NS_REPORT_DIRNAME', wp_upload_dir()['basedir'] . '/' . NS_UPLOADS);
+	//define( 'SSW_PLUGIN_DIR', 'nsd_ssw/ssw.php' );
+	//define( 'MSP_PLUGIN_DIR', 'sitewide-privacy-options/sitewide-privacy-options.php' );
 
+	if ( ! defined( 'NS_SITE_TABLE' ) )
+		define( 'NS_SITE_TABLE', 'ns_site_stats' );
+	if ( ! defined( 'NS_PLUGIN_TABLE' ) )
+		define( 'NS_PLUGIN_TABLE', 'ns_plugin_stats' );
+	if ( ! defined( 'NS_USER_TABLE' ) )
+		define( 'NS_USER_TABLE', 'ns_user_stats' );
+	if ( ! defined( 'NS_THEME_TABLE' ) )
+		define( 'NS_THEME_TABLE', 'ns_theme_stats' );
 
-//define( 'SSW_PLUGIN_DIR', 'nsd_ssw/ssw.php' );
-//define( 'MSP_PLUGIN_DIR', 'sitewide-privacy-options/sitewide-privacy-options.php' );
-define( 'NS_SITE_TABLE', 'ns_site_stats' );
-define( 'NS_PLUGIN_TABLE', 'ns_plugin_stats' );
-define( 'NS_USER_TABLE', 'ns_user_stats' );
-define( 'NS_THEME_TABLE', 'ns_theme_stats' );
-//define( 'SSW_TABLE_NAME', 'ssw_main_nsd' );
+	//define( 'SSW_TABLE_NAME', 'ssw_main_nsd' );
 
+}
 
+set_globals();
 run_network_stats();
