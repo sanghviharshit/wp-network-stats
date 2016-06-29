@@ -30,15 +30,7 @@
 	 */
 
 	$( window ).load(function() {
-		/*
-		 JS Date is number of milliseconds since 1970, PHP date is number of seconds since 1970.
-		 */
-		var blog_registered_data = JSON.parse(data_to_js.blog_registered_data);
-		var user_registered_data = JSON.parse(data_to_js.user_registered_data);
-
-		timeseries('timeseries blogs', blog_registered_data, true);
-		timeseries('timeseries users', user_registered_data, true);
-
+		
 	});
 
 })( jQuery );
@@ -53,6 +45,7 @@ function enableElements(elm, value)
 {
 	document.getElementById(elm).disabled=value;
 }
+/*
 function handleClickStatsSites(cb) {
 	pluginStatsPerSiteChecked = document.getElementById("cb_plugins_per_site").checked;
 	userStatsPerSiteChecked = document.getElementById("cb_users_per_site").checked
@@ -75,3 +68,4 @@ function handleClickStatsPerSite(cb) {
 	}
 
 }
+*/

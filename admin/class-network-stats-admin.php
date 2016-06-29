@@ -109,7 +109,7 @@ class Network_Stats_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/network-stats-admin.js', array('jquery'), $this->version, false);
 	}
 
 	public function load_visualization_page_styles() {
@@ -120,7 +120,7 @@ class Network_Stats_Admin {
 	 * Load the JS for Visualization page.
      */
 	public function load_visualization_page_scripts() {
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/network-stats-admin.js', array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/network-stats-admin-visualization.js', array('jquery'), $this->version, false);
 		wp_enqueue_script($this->plugin_name . '-timeseries', plugin_dir_url(__FILE__) . 'js/timeseries.js', array(), $this->version, true);
 		wp_enqueue_script($this->plugin_name . '-d3', "https://d3js.org/d3.v3.min.js", false);
 		wp_enqueue_script($this->plugin_name . '-lodash', "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.min.js", array(), $this->version, false);
@@ -783,8 +783,8 @@ class Network_Stats_Admin {
 		
 		$count_users = count($user_list);
 		
-		echo "<input id='number_users' name='" . NS_OPTIONS_SETTINGS . "[number_users]' size='40' type='number' value='{$options['number_users']}' min='1' max='{$count_users}' />";
-		echo "<p class='description'>(WIP) The number of users for one batch of the reports generation process.</p>";
+		//echo "<input id='number_users' name='" . NS_OPTIONS_SETTINGS . "[number_users]' size='40' type='number' value='{$options['number_users']}' min='1' max='{$count_users}' />";
+		//echo "<p class='description'>(WIP) The number of users for one batch of the reports generation process.</p>";
 	}
 
 	/**
