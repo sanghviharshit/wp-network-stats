@@ -387,7 +387,8 @@ class Site_Stats_Admin
         $number_sites = $args['limit'];
         $offset = $args['offset'];
         $in_seconds = $args['in_seconds'];
-        $count_blogs = get_blog_count();
+        $blog_list = Network_Stats_Helper::get_network_blog_list();
+        $count_blogs = count($blog_list);
 
         if ($offset < $count_blogs) {
             $offset = $offset + $number_sites;
