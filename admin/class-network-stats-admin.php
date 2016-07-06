@@ -427,6 +427,7 @@ class Network_Stats_Admin {
 				NS_PAGE_SETTINGS,															//Page
 				NS_SECTION_BATCH 															//Section
 			);
+		/*
 		add_settings_field(
 				'number_users', 															//ID
 				'Number of users', 														//Title
@@ -434,6 +435,7 @@ class Network_Stats_Admin {
 				NS_PAGE_SETTINGS,															//Page
 				NS_SECTION_BATCH 															//Section
 			);
+		*/
 		add_settings_field(
 				'in_seconds', 																//ID
 				'In seconds', 																//Title
@@ -783,8 +785,8 @@ class Network_Stats_Admin {
 		
 		$count_users = count($user_list);
 		
-		//echo "<input id='number_users' name='" . NS_OPTIONS_SETTINGS . "[number_users]' size='40' type='number' value='{$options['number_users']}' min='1' max='{$count_users}' />";
-		//echo "<p class='description'>(WIP) The number of users for one batch of the reports generation process.</p>";
+		echo "<input id='number_users' name='" . NS_OPTIONS_SETTINGS . "[number_users]' size='40' type='number' value='{$options['number_users']}' min='1' max='{$count_users}' />";
+		echo "<p class='description'>(WIP) The number of users for one batch of the reports generation process.</p>";
 	}
 
 	/**
