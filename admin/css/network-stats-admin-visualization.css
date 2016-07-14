@@ -6,15 +6,46 @@
 text {
     font: 12px sans-serif;
 }
-.site_privacy {
-    display: block;
-    float: left;
-    height: 400px;
-    width: 400px;
+
+#vis_privacy {
+    /*float: left;*/
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
 }
+
+#vis_theme {
+    /*float: left;*/
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+#vis_db_version {
+    /*float: left;*/
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+#vis_sites_registered {
+    /*float: left;*/
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+}
+
 html, body {
     margin: 0px;
     padding: 0px;
     height: 100%;
     width: 100%;
+}
+
+.bootstrap-wrapper {
+    @import (less) url( '../../vendor/bootstrap/css/bootstrap.min.css' );
 }

@@ -114,7 +114,8 @@ class Network_Stats_Admin {
 
 	public function load_visualization_page_styles() {
 		wp_enqueue_style( $this->plugin_name . '-visualization', plugin_dir_url( __FILE__ ) . 'css/network-stats-admin-visualization.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name . '-nv-d3', plugin_dir_url( __FILE__ ) . 'css/nv.d3.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '-nv-d3', plugin_dir_url( __FILE__ ) . '../vendor/nv.d3/nv.d3.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '-bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
 		//wp_enqueue_style( $this->plugin_name . '-highlight', plugin_dir_url( __FILE__ ) . 'css/highlight.css', array(), $this->version, 'all' );
 		//wp_enqueue_style( $this->plugin_name . '-google', "https://fonts.googleapis.com/css?family=Open+Sans:400,700", array(), $this->version, 'all' );
 	}
@@ -125,8 +126,15 @@ class Network_Stats_Admin {
 		//wp_enqueue_script($this->plugin_name . '-timeseries', plugin_dir_url(__FILE__) . 'js/timeseries.js', array(), $this->version, true);
 		//wp_enqueue_script($this->plugin_name . '-d3', "https://d3js.org/d3.v3.min.js", false);
 		wp_enqueue_script($this->plugin_name . '-d3', "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js", false);
-		wp_enqueue_script($this->plugin_name . '-nv-d3', plugin_dir_url(__FILE__) . 'js/nv.d3.min.js', array($this->plugin_name . '-d3'), $this->version, false);
-		wp_enqueue_script($this->plugin_name . '-visualization', plugin_dir_url(__FILE__) . 'js/network-stats-admin-visualization.js', array('jquery', $this->plugin_name . '-nv-d3'), $this->version, false);
+		wp_enqueue_script($this->plugin_name . '-nv-d3', plugin_dir_url(__FILE__) . '../vendor/nv.d3/nv.d3.min.js', array($this->plugin_name . '-d3'), $this->version, false);
+		wp_enqueue_script($this->plugin_name . '-bootstrap-hack', plugin_dir_url(__FILE__) . '/js/bootstrap-hack.js', false, $this->version, false);
+		wp_enqueue_script(
+			$this->plugin_name . '-visualization',
+			plugin_dir_url(__FILE__) . 'js/network-stats-admin-visualization.js',
+			array('jquery', $this->plugin_name . '-nv-d3', $this->plugin_name . '-bootstrap-hack'),
+			$this->version,
+			false
+		);
 		/*
 		wp_enqueue_script($this->plugin_name . '-lodash', "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.min.js", array(), $this->version, false);
 		wp_enqueue_script($this->plugin_name . '-moment', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js", array(), $this->version, false);
@@ -302,22 +310,31 @@ class Network_Stats_Admin {
 	public function network_stats_visualization_page()
 	{
 		?>
-		<div class="wrap">
-			<h2>WP Network Stats</h2>
+		<div class="bootstrap-wrapper">
+			<div class="container">
+				<h2>WP Network Stats</h2>
 
-			<h2> Sites Privacy </h2>
-			<div class="site_privacy"><svg id="pie_site_privacy"></svg></div>
-
-			<h2> Theme Distribution </h2>
-			<div class="theme"><svg id="pie_theme"></svg></div>
-
-			<!--
-			<h2>Sites registered over time</h2>
-			<div class="timeseries blogs"></div>
-
-			<h2>Users registered over time</h2>
-			<div class="timeseries users"></div>
-			-->
+				<div class="row">
+					<div class="col-md-4">
+						<h3>Site Privacy</h3>
+						<div class="vis_privacy with-transitions" id="vis_privacy"><svg id="pie_privacy"></svg></div>
+					</div>
+					<div class="col-md-4">
+						<h3>Curent Theme</h3>
+						<div class="vis_theme"><svg id="pie_theme"></svg></div>
+					</div>
+					<div class="col-md-4">
+						<h3>DB Version</h3>
+						<div class="vis_db_version"><svg id="pie_db_version"></svg></div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<h3>Sites Registered</h3>
+						<div class="vis_sites_registered"><svg id="line_sites_registered"></svg></div>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<?php
