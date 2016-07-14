@@ -300,7 +300,6 @@ class Site_Stats_Admin
                 $themes_allowed_on_site = WP_Theme::get_allowed_on_site();
                 $themes_allowed_on_site_count = count($themes_allowed_on_site);
 
-
                 $ns_site_row = array(
                     'blog_id' => $blog['blog_id'],
                     'blog_name' => $blog_details->blogname,
@@ -316,7 +315,7 @@ class Site_Stats_Admin
                     'current_theme' => $current_theme,
                     'themes_allowed_per_site' => $themes_allowed_on_site_count,
 
-                    'posts_count' => $posts_count,
+                    //'posts_count' => $posts_count,
                     'posts_published' => $count_posts->publish,
                     'posts_future' => $count_posts->future,
                     'posts_draft' => $count_posts->draft,
@@ -350,6 +349,17 @@ class Site_Stats_Admin
                     'deleted' => $blog_details->deleted,
                     'attachments_count' => $attachments_count
                 );
+
+                if(defined('SSW_MAIN_TABLE')) {
+                    $ssw_main_table = $wpdb->base_prefix.SSW_MAIN_TABLE;
+                    $site_type = $wpdb->get_var( 
+                        'SELECT site_type FROM '.$ssw_main_table.' WHERE blog_id = '.$blog['blog_id']
+                        );
+
+                    if($site_type) {
+                        $ns_site_row['site_type'] = $site_type;
+                    }                    
+                }
 
                 $ns_site_data [] = $ns_site_row;
                 //fputcsv($file_site_stats, $ns_site_row);
@@ -456,6 +466,10 @@ class Site_Stats_Admin
             'deleted' => 'deleted',
             'attachments_count' => 'attachments_count'
         );
+
+        if(defined('SSW_MAIN_TABLE')) {
+            $ns_site_row['site_type'] = 'site_type';
+        }
         return $ns_site_row;
     }
 }

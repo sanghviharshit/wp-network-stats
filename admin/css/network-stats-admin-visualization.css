@@ -1,0 +1,20 @@
+/**
+ * All of the CSS for your network stats visualization page only
+ * included in this file.
+ */
+
+text {
+    font: 12px sans-serif;
+}
+.site_privacy {
+    display: block;
+    float: left;
+    height: 400px;
+    width: 400px;
+}
+html, body {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+}
