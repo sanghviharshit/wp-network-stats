@@ -40,9 +40,7 @@
 		timeseries('timeseries users', user_registered_data, false);
 		*/
 
-
-		d3.csv("../../wp-content/uploads/ns_uploads/site-stats.csv", function(error, csv_data) {
-
+		d3.csv("../../wp-content/uploads/ns_uploads/site-stats.csv", function(error, csv_site_data) {
 
 			var fitScreen = false;
 			var zoom = 1;
@@ -58,7 +56,7 @@
 				.rollup(function(d) { 
 					return d3.sum(d, function(g) {return 1; });
 				})
-				.entries(csv_data);
+				.entries(csv_site_data);
 			/*
 			data.sort(function(a, b) {
         			return a.key < b.key;
@@ -119,7 +117,7 @@
 				.rollup(function(d) { 
 					return d3.sum(d, function(g) {return 1; });
 				})
-				.entries(csv_data);
+				.entries(csv_site_data);
 
 			themeData.forEach(function(d) {
 				d.value = d.values;
@@ -166,7 +164,7 @@
 				.rollup(function(d) {
 					return d3.sum(d, function(g) {return 1; });
 				})
-				.entries(csv_data);
+				.entries(csv_site_data);
 
 			dbVersionData.forEach(function(d) {
 				d.value = d.values;
@@ -213,7 +211,7 @@
 			var widthFull = 1000;
 
 			var phpDateFormat = d3.time.format("%Y-%m-%d %H:%M:%S");
-			csv_data.forEach(function(d) {
+			csv_site_data.forEach(function(d) {
 				//console.log(d.registered);
 				//console.log(format.parse(d.registered));
 				d.registered = phpDateFormat.parse(d.registered);
@@ -227,7 +225,7 @@
 				.rollup(function(d) {
 					return d3.sum(d, function(g) {return 1; });
 				})
-				.entries(csv_data);
+				.entries(csv_site_data);
 
 			sitesRegisteredData.forEach(function(d) {
 				d.x = dateFormat.parse(d.key);
@@ -253,8 +251,9 @@
 			console.log(y.domain());
 
 			nv.addGraph(function() {
-				var chart = nv.models.lineChart()
+				var chart = nv.models.lineWithFocusChart()
 						.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
+						.margin({right: 100})  //Adjust chart margins to give the x-axis some breathing room.
 						.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
 						//.transitionDuration(350)  //how fast do you want the lines to transition?
 						.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
@@ -263,6 +262,8 @@
 						.width(widthFull)
 						.height(height)
 					;
+
+		        chart.useInteractiveGuideline(true);
 
 				var tickMultiFormat = d3.time.format.multi([
 					["%-I:%M%p", function(d) { return d.getMinutes(); }], // not the beginning of the hour
@@ -274,6 +275,9 @@
 
 				chart.xAxis     //Chart x-axis settings
 					.axisLabel('Time')
+					.tickFormat(function (d) { return dateFormat(new Date(d)); })
+				
+				chart.x2Axis
 					.tickFormat(function (d) { return dateFormat(new Date(d)); })
 
 				chart.yAxis     //Chart y-axis settings
@@ -290,6 +294,7 @@
 					.datum(lineChartData)         //Populate the <svg> element with chart data...
 					.attr('width', widthFull)
 					.attr('height', height)
+					.attr('viewBox', '0 0 ' + widthFull + ' ' + height)
 					.transition().duration(500)
 					.attr('perserveAspectRatio', 'xMinYMid')
 					.call(chart);          //Finally, render the chart!

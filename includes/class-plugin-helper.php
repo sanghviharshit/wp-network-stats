@@ -169,7 +169,8 @@ class Network_Stats_Helper {
 	 * 
 	 * @since	0.1.0
 	 * @access	public
-	 * @return array
+	 * @return array Key is the plugin file path and the value is an array of the plugin data.
+	 * 			e.g. hello-dolly/hello.php => Plugin Data
 	 */
 	public static function get_list_all_plugins() {
 		// Get List of all plugins using get_plugins()
@@ -643,8 +644,14 @@ class Network_Stats_Helper {
 	}
 
 	public static function get_plugin_repository_info($plugin_file = '') {
+		
+		$plugin_file_pieces = explode("/", $plugin_file);
+		$plugin_slug = $plugin_file_pieces[0];
+
 		require_once( ABSPATH . 'wp-admin/includes/plugin-install.php' ); // Required for plugin API
-		$info        = plugins_api( 'plugin_information', array( 'slug' => '' ) ); // get repository plugin info
+		$info = plugins_api( 'plugin_information', array( 'slug' => $plugin_slug, 'fields' => array( 'sections' => false )  ) ); // get repository plugin info
+
+		return $info;
 						
 	}
 

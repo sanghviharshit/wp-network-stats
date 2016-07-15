@@ -314,6 +314,15 @@ class Network_Stats_Admin {
 			<div class="container">
 				<h2>WP Network Stats</h2>
 
+				<?php
+				
+				?>
+				<div class="row">
+					<div class="col-md-12">
+						<h3>Sites Registered</h3>
+						<div class="vis_sites_registered"><svg id="line_sites_registered"></svg></div>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col-md-4">
 						<h3>Site Privacy</h3>
@@ -326,12 +335,6 @@ class Network_Stats_Admin {
 					<div class="col-md-4">
 						<h3>DB Version</h3>
 						<div class="vis_db_version"><svg id="pie_db_version"></svg></div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-12">
-						<h3>Sites Registered</h3>
-						<div class="vis_sites_registered"><svg id="line_sites_registered"></svg></div>
 					</div>
 				</div>
 			</div>

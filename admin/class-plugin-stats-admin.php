@@ -77,12 +77,21 @@ class Plugin_Stats_Admin {
 		foreach ( $all_plugins as $plugin_file => $plugin_data ) {
 			$active_on_network = Network_Stats_Helper::is_plugin_network_activated ( $plugin_file );
 			$update_available = false;
-			$new_version = '';
+			$latest_version = '';
+			$last_updated = '';
+
+			$plugins_api_info = Network_Stats_Helper::get_plugin_repository_info($plugin_file);
+			if ( !is_wp_error( $plugins_api_info ) ) {				
+				if ( isset( $plugins_api_info->last_updated ) )
+					$last_updated = $plugins_api_info->last_updated;
+				if ( isset( $plugins_api_info->version ) )
+					$latest_version = $plugins_api_info->version;
+			}
+					
 			if(isset($plugin_update_info[$plugin_file])) {
 				$update_available = true;
-				$new_version = $plugin_update_info[$plugin_file]->new_version;
+				$latest_version = $plugin_update_info[$plugin_file]->new_version;
 				Network_Stats_Helper::write_log($plugin_update_info[$plugin_file]);
-				$last_updated = '';
 				/*
 				if(isset($plugin_update_info[$plugin_file]->last_updated)) {
 					$last_updated = $plugin_update_info[$plugin_file]->last_updated;
@@ -104,9 +113,9 @@ class Plugin_Stats_Admin {
 				'network_only' => $plugin_data['Network'] ? 'yes':'no',
 				'network_active' => $active_on_network ? 'yes':'no',
 				'version' => $plugin_data['Version'],
-				'new_version' => $new_version,
+				'latest_version' => $latest_version,
 				'update_available' => $update_available ? 'yes' : '',
-				//'last_updated' =>  $last_updated
+				'last_updated' =>  $last_updated
 			);
 			
 			$ns_plugin_data [] = $ns_plugin_row;
@@ -146,9 +155,9 @@ class Plugin_Stats_Admin {
 			'network_only' => 'network_only',
 			'network_active' => 'network_active',
 			'version' => 'version',
-			'new_version' => 'new_version',
+			'latest_version' => 'latest_version',
 			'update_available' => 'update_available',
-			//'last_updated' => 'last_updated'
+			'last_updated' => 'last_updated'
 		);
 		return $ns_plugin_row;
 	}
