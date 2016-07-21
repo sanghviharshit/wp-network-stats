@@ -104,7 +104,7 @@ class Theme_Stats_Admin {
 		$report_dirname = NS_REPORT_DIRNAME;
 		
 		$report_theme_stats = $report_dirname . '/' . 'theme-stats.csv';
-		chmod($report_theme_stats,0644);
+		chmod($report_theme_stats,NS_STATS_FILE_PERMISSION);
 
 		$file_theme_stats = fopen($report_theme_stats,"w");
 

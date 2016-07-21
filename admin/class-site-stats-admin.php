@@ -101,15 +101,15 @@ class Site_Stats_Admin
 
         if (isset($args['sites']) && $args['sites']) {
             $file_site_stats = fopen($report_site_stats, $mode);
-            chmod($report_site_stats, 0644);
+            chmod($report_site_stats, NS_STATS_FILE_PERMISSION);
         }
         if (isset($args['plugins_per_site']) && $args['plugins_per_site']) {
             $file_plugin_stats_per_site = fopen($report_plugin_stats_per_site, $mode);
-            chmod($report_plugin_stats_per_site, 0644);
+            chmod($report_plugin_stats_per_site, NS_STATS_FILE_PERMISSION);
         }
         if (isset($args['users_per_site']) && $args['users_per_site']) {
             $file_user_stats_per_site = fopen($report_user_stats_per_site, $mode);
-            chmod($report_user_stats_per_site, 0644);
+            chmod($report_user_stats_per_site, NS_STATS_FILE_PERMISSION);
         }
 
 

@@ -90,7 +90,7 @@ class User_Stats_Admin {
 		
 		$report_user_stats = $report_dirname . '/' . 'user-stats.csv';
 		$file_user_stats = fopen($report_user_stats,"w");
-		chmod($report_user_stats,0644);
+		chmod($report_user_stats,NS_STATS_FILE_PERMISSION);
 		foreach ($ns_user_data as $user_data) {
     		fputcsv($file_user_stats, $user_data);
 		}

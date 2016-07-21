@@ -198,6 +198,9 @@ class Network_Stats {
 		/* Add action to display the menu items in Network Admin's Dashboard */
 		$this->loader->add_action( 'network_admin_menu', $plugin_admin, 'register_menu' );
 
+		/* Add action to handle file requests */
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'handle_file_requests' );
+
 		/* Add action to run when cron job fires */
 		$this->loader->add_action( 'cron_generate_reports', $plugin_admin, 'generate_reports', 10, 3 );
 		
