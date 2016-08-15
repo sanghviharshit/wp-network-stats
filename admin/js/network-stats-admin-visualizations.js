@@ -30,6 +30,7 @@
 	 */
 
 	$( window ).load(function() {
+
 		/*
 		 JS Date is number of milliseconds since 1970, PHP date is number of seconds since 1970.
 		 
@@ -47,11 +48,73 @@
 
 		d3.csv(file_site_stats, function(error, file_site_data) {
 			csv_site_data = file_site_data;
-			d3.csv(file_user_stats, function(error, file_user_data) {
+			show_parallel_coordinates();
+            d3.csv(file_user_stats, function(error, file_user_data) {
 				csv_user_data = file_user_data;
 				handle_csv_site_data()
 			});
 		});
+
+        function show_parallel_coordinates() {
+
+
+            var colorgen = d3.scale.ordinal()
+                .range(["#a6cee3","#1f78b4","#b2df8a","#33a02c",
+                    "#fb9a99","#e31a1c","#fdbf6f","#ff7f00",
+                    "#cab2d6","#6a3d9a","#ffff99","#b15928"]);
+
+            var colors = d3.scale.category20b();
+
+            var color = function(d) { return colors(d.group); };
+
+
+            // linear color scale
+            var blue_to_brown = d3.scale.linear()
+                .domain([-2, 1])
+                .range(["steelblue", "brown"])
+                .interpolate(d3.interpolateLab);
+
+            var dimensions = {
+                "privacy":
+                {
+                    orient: 'right',
+                    type: 'string',
+                    tickPadding: 0,
+                    innerTickSize: 8
+                },
+                "users_count":{type:"number"},
+				//"blog_id":{type:"number"},
+                "active_plugins_count":{type:"number"},
+                //"current_theme":
+                "posts_published":{type:"number"},
+                "comments_count":{type:"number"},
+                "attachments_count":{type:"number"},
+            };
+
+            /*
+             .hideAxis([
+             "blog_id", "blog_name", "blog_description", "siteurl", "blog_url",
+             "posts_future", "posts_draft", "posts_pending",
+             "pages_future",	"pages_draft", "pages_pending",
+             "last_updated", "admin_email"
+             ])
+             */
+            var parcoords = d3.parcoords()("#vis_multidimensional_detective")
+                .data(csv_site_data)
+                .dimensions(dimensions)
+                //.color(color)
+                .color(function(d) { return blue_to_brown(d['privacy']); })  // quantitative color scale
+                .alpha(0.4)
+                .composite("darken")
+				//.rotateLabels(false)
+				.render()
+				.shadows()
+				.mode("queue")
+				.reorderable()
+				.brushMode("1D-axes")
+        }
+
+
 
 		function handle_csv_site_data() {
 
@@ -135,7 +198,7 @@
 
 			var themeData = d3.nest()
 				.key(function(d) { return d.current_theme;})
-				.sortKeys()
+				.sortKeys(d3.ascending)
 				.rollup(function(d) {
 					return d3.sum(d, function(g) {return 1; });
 				})
@@ -182,7 +245,7 @@
 
 			var dbVersionData = d3.nest()
 				.key(function(d) { return d.db_version;})
-				.sortKeys()
+				.sortKeys(d3.ascending)
 				.rollup(function(d) {
 					return d3.sum(d, function(g) {return 1; });
 				})
@@ -245,7 +308,7 @@
 
 			var sitesRegisteredData = d3.nest()
 				.key(function(d) { return dateFormat(d.registered);})
-				.sortKeys()
+				.sortKeys(d3.ascending)
 				.rollup(function(d) {
 					return d3.sum(d, function(g) {return 1; });
 				})
@@ -268,7 +331,7 @@
 			});
 			var usersRegisteredData = d3.nest()
 				.key(function(d) { return dateFormat(d.user_registered);})
-				.sortKeys()
+				.sortKeys(d3.ascending)
 				.rollup(function(d) {
 					return d3.sum(d, function(g) {return 1; });
 				})

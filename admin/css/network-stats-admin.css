@@ -10,10 +10,20 @@ html, body {
     width: 100%;
 }
 
+label {
+    font-weight: 500;
+}
+
+input[type=checkbox], input[type=radio] {
+    margin: 0;
+}
+
+.highlight {
+    background-color: transparent;
+}
+
+
 body {
-    font: 16px 'Open Sans';
-    color: #2C3E50;
-    background: #F1F1F1;
 }
 
 a {
@@ -41,11 +51,6 @@ a {
 
 .container .row {
     margin-bottom: 30px;
-}
-
-.bootstrap-wrapper {
-@import (less) url( '../../vendor/bootstrap/css/bootstrap.min.css' );
-    background: white;
 }
 
 /**
@@ -81,5 +86,80 @@ a {
     padding: 0px;
     height: 100%;
     width: 100%;
+}
+
+#vis_multidimensional_detective {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+#parallel_multidimensional_detective {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+.parcoords {
+    /*background-color: transparent;*/
+    background-color: rgb(252, 252, 252);
+}
+
+
+/**
+ * From style.css of example for parcoords
+ */
+
+
+body {
+    font-size: 14px;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    margin: 24px;
+    background: #fcfcfc;
+    line-height: 1.45em;
+}
+a {
+    color: #555;
+}
+a:hover {
+    color: #000;
+}
+ul {
+    margin: 0 20px;
+    padding: 0;
+}
+.dark {
+    background: #222;
+}
+p {
+    width: 560px;
+}
+pre {
+    color: #444;
+    font-family: Ubuntu Mono, Monaco, monospace;
+    padding: 4px 8px;
+    background: #f2f2f2;
+    border: 1px solid #ccc;
+}
+h1 small {
+    font-weight: normal;
+    font-size: 0.5em;
+}
+h3 {
+    margin-top: 40px;
+}
+.float {
+    float: left;
+}
+.centered {
+    text-align: center;
+}
+.hide {
+    display: none;
+}
+input {
+    font-size: 16px;
 }
 

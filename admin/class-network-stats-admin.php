@@ -13,7 +13,7 @@
 /**
  * The dashboard-specific functionality of the plugin.
  *
- * Defines the plugin name, version, and two examples hooks for how to
+ * Defines the plugin name, version, and hooks for how to
  * enqueue the dashboard-specific stylesheet and JavaScript.
  *
  * @package    Network_Stats
@@ -89,7 +89,8 @@ class Network_Stats_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name . '-admin-css', plugin_dir_url( __FILE__ ) . 'css/network-stats-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
+		wp_enqueue_style( $this->plugin_name . '-admin', plugin_dir_url( __FILE__ ) . 'css/network-stats-admin.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -113,8 +114,8 @@ class Network_Stats_Admin {
 	}
 
 	public function load_visualizations_page_styles() {
-		wp_enqueue_style( $this->plugin_name . '-nv-d3', plugin_dir_url( __FILE__ ) . '../vendor/nv.d3/nv.d3.min.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name . '-bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
+		wp_enqueue_style( 'nv-d3', plugin_dir_url( __FILE__ ) . '../vendor/nv.d3/nv.d3.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'parcoords', plugin_dir_url( __FILE__ ) . '../vendor/parcoords/d3.parcoords.css', false, $this->version, 'all');
 		//wp_enqueue_style( $this->plugin_name . '-highlight', plugin_dir_url( __FILE__ ) . 'css/highlight.css', array(), $this->version, 'all' );
 		//wp_enqueue_style( $this->plugin_name . '-google', "https://fonts.googleapis.com/css?family=Open+Sans:400,700", array(), $this->version, 'all' );
 	}
@@ -124,12 +125,15 @@ class Network_Stats_Admin {
 	public function load_visualizations_page_scripts() {
 		//wp_enqueue_script($this->plugin_name . '-timeseries', plugin_dir_url(__FILE__) . 'js/timeseries.js', array(), $this->version, true);
 		//wp_enqueue_script($this->plugin_name . '-d3', "https://d3js.org/d3.v3.min.js", false);
-		wp_enqueue_script('d3-js', "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js", false);
-		wp_enqueue_script('nv-d3-js', plugin_dir_url(__FILE__) . '../vendor/nv.d3/nv.d3.min.js', array('d3-js'), $this->version, false);
+		wp_enqueue_script( 'd3', plugin_dir_url( __FILE__ ) . '../vendor/d3/d3.min.js', array(), $this->version, false );
+		//wp_enqueue_script('d3', "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js", false);
+		wp_enqueue_script('nv-d3', plugin_dir_url(__FILE__) . '../vendor/nv.d3/nv.d3.min.js', array('d3'), $this->version, false);
+		wp_enqueue_script( 'd3-svg-multibrush', plugin_dir_url( __FILE__ ) . '../vendor/d3/d3.svg.multibrush.js', array('d3'), $this->version, false );
+		wp_enqueue_script('parcoords', plugin_dir_url(__FILE__) . '../vendor/parcoords/d3.parcoords.js', array('d3'), $this->version, false);
 		wp_enqueue_script(
 			$this->plugin_name . '-visualizations',
 			plugin_dir_url(__FILE__) . 'js/network-stats-admin-visualizations.js',
-			array('jquery', 'nv-d3-js'),
+			array('jquery', 'nv-d3'),
 			$this->version,
 			false
 		);
@@ -355,8 +359,8 @@ class Network_Stats_Admin {
 	public function network_stats_visualizations_page()
 	{
 		?>
-		<div class="bootstrap-wrapper">
-			<div class="container">
+		<div class="bootstrap-fluid">
+			<div class="container-fluid">
 				<h2>WP Network Stats</h2>
 
 				<?php
@@ -388,7 +392,13 @@ class Network_Stats_Admin {
 						<div class="vis_site_registrations"><svg id="scatter_site_registrations"></svg></div>
 					</div>
 				</div>
-			</div>
+				<div class=""row" >
+					<div class="col-md-12">
+						<h3>Multidimensional Detective</h3>
+						<div class="parcoords" id="vis_multidimensional_detective" style="height:300px"></div>
+					</div>
+				</div>
+		</div>
 		</div>
 
 		<?php
