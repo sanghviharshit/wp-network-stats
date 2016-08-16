@@ -3,34 +3,19 @@
  * included in this file.
  */
 
-html, body {
-    margin: 0px;
-    padding: 0px;
-    height: 100%;
-    width: 100%;
-}
-
 label {
     font-weight: 500;
 }
-
 input[type=checkbox], input[type=radio] {
     margin: 0;
 }
-
 .highlight {
     background-color: transparent;
 }
-
-
-body {
-}
-
 a {
     text-decoration: none;
     color: #3498DB;
 }
-
 .text {
     width: 100%;
 }
@@ -44,13 +29,27 @@ a {
 /**
  * All of the CSS for overriding bootstrap styles only
  */
-
 .container {
     width: 100%;
 }
-
 .container .row {
     margin-bottom: 30px;
+}
+
+.vis_loading {
+    background: rgba( 255, 255, 255, .8 )
+        url('http://i.stack.imgur.com/FhHRx.gif')
+        50% 50%
+        no-repeat;
+
+    height:     100%;
+    width:      100%;
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+#analytics.loading .vis_loading {
+    display: block;
 }
 
 /**
@@ -63,7 +62,6 @@ a {
     height: 100%;
     width: 100%;
 }
-
 #vis_theme {
     /*float: left;*/
     margin: 0px;
@@ -71,7 +69,6 @@ a {
     height: 100%;
     width: 100%;
 }
-
 #vis_db_version {
     /*float: left;*/
     margin: 0px;
@@ -79,7 +76,6 @@ a {
     height: 100%;
     width: 100%;
 }
-
 #vis_registrations {
     /*float: left;*/
     margin: 0px;
@@ -87,48 +83,29 @@ a {
     height: 100%;
     width: 100%;
 }
-
 #vis_multidimensional_detective {
     margin: 0px;
     padding: 0px;
     height: 100%;
     width: 100%;
 }
-
-#parallel_multidimensional_detective {
-    margin: 0px;
-    padding: 0px;
-    height: 100%;
-    width: 100%;
-}
-
 .parcoords {
     /*background-color: transparent;*/
     background-color: rgb(252, 252, 252);
 }
 
-
 /**
  * From style.css of example for parcoords
  */
 
-
 body {
-    font-size: 14px;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-    margin: 24px;
     background: #fcfcfc;
-    line-height: 1.45em;
 }
 a {
     color: #555;
 }
 a:hover {
     color: #000;
-}
-ul {
-    margin: 0 20px;
-    padding: 0;
 }
 .dark {
     background: #222;

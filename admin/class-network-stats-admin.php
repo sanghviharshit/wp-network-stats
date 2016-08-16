@@ -113,16 +113,17 @@ class Network_Stats_Admin {
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/network-stats-admin.js', array('jquery'), $this->version, false);
 	}
 
-	public function load_visualizations_page_styles() {
+	public function load_analytics_page_styles() {
+		//wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
 		wp_enqueue_style( 'nv-d3', plugin_dir_url( __FILE__ ) . '../vendor/nv.d3/nv.d3.min.css', array(), $this->version, 'all' );
 		wp_enqueue_style( 'parcoords', plugin_dir_url( __FILE__ ) . '../vendor/parcoords/d3.parcoords.css', false, $this->version, 'all');
 		//wp_enqueue_style( $this->plugin_name . '-highlight', plugin_dir_url( __FILE__ ) . 'css/highlight.css', array(), $this->version, 'all' );
 		//wp_enqueue_style( $this->plugin_name . '-google', "https://fonts.googleapis.com/css?family=Open+Sans:400,700", array(), $this->version, 'all' );
 	}
 	/**
-	 * Load the JS for Visualization page.
+	 * Load the JS for Analytics page.
      */
-	public function load_visualizations_page_scripts() {
+	public function load_analytics_page_scripts() {
 		//wp_enqueue_script($this->plugin_name . '-timeseries', plugin_dir_url(__FILE__) . 'js/timeseries.js', array(), $this->version, true);
 		//wp_enqueue_script($this->plugin_name . '-d3', "https://d3js.org/d3.v3.min.js", false);
 		wp_enqueue_script( 'd3', plugin_dir_url( __FILE__ ) . '../vendor/d3/d3.min.js', array(), $this->version, false );
@@ -131,8 +132,8 @@ class Network_Stats_Admin {
 		wp_enqueue_script( 'd3-svg-multibrush', plugin_dir_url( __FILE__ ) . '../vendor/d3/d3.svg.multibrush.js', array('d3'), $this->version, false );
 		wp_enqueue_script('parcoords', plugin_dir_url(__FILE__) . '../vendor/parcoords/d3.parcoords.js', array('d3'), $this->version, false);
 		wp_enqueue_script(
-			$this->plugin_name . '-visualizations',
-			plugin_dir_url(__FILE__) . 'js/network-stats-admin-visualizations.js',
+			$this->plugin_name . '-analytics',
+			plugin_dir_url(__FILE__) . 'js/network-stats-admin-analytics.js',
 			array('jquery', 'nv-d3'),
 			$this->version,
 			false
@@ -143,7 +144,7 @@ class Network_Stats_Admin {
 		wp_enqueue_script($this->plugin_name . '-highlight', "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js", array(), $this->version, false);
 		*/
 
-		$file_path_url = network_admin_url( 'admin.php?page=' . $this->plugin_name . '-visualizations' . '&file=');
+		$file_path_url = network_admin_url( 'admin.php?page=' . $this->plugin_name . '-analytics' . '&file=');
 		$data_to_js = array(
 			'file_site_stats' => $file_path_url . 'site-stats.csv',
 			'file_user_stats' => $file_path_url . 'user-stats.csv',
@@ -152,7 +153,7 @@ class Network_Stats_Admin {
 			'file_plugin_stats_per_site' => $file_path_url . 'plugin-stats-per-site.csv',
 			'file_user_stats_per_site' => $file_path_url . 'user-stats-per-site.csv',
 		);
-		wp_localize_script($this->plugin_name . '-visualizations', 'data_to_js', $data_to_js);
+		wp_localize_script($this->plugin_name . '-analytics', 'data_to_js', $data_to_js);
 	}
 
 	/**
@@ -163,7 +164,7 @@ class Network_Stats_Admin {
 		//die(var_dump($_GET));
 		//if ($pagenow=='admin.php' &&
 		if (isset($_GET['page']) &&
-			$_GET['page'] = $this->plugin_name . '-visualizations' &&
+			$_GET['page'] = $this->plugin_name . '-analytics' &&
 			current_user_can('manage_network') &&
 			isset($_GET['file']) ) {
 
@@ -243,13 +244,13 @@ class Network_Stats_Admin {
 		), 'dashicons-analytics', '3.756789' );
 
 		$read_cap = 'manage_network';
-		$ns_visualizations_page = add_submenu_page ( $this->plugin_name, 'Visualizations', 'Visualizations', $read_cap, $this->menu_slug . '-visualizations', array (
+		$ns_analytics_page = add_submenu_page ( $this->plugin_name, 'Analytics', 'Analytics', $read_cap, $this->menu_slug . '-analytics', array (
 			$this,
-			'network_stats_visualizations_page'
+			'network_stats_analytics_page'
 		) );
 		// http://wordpress.stackexchange.com/questions/41207/how-do-i-enqueue-styles-scripts-on-certain-wp-admin-pages
-		add_action( 'load-' . $ns_visualizations_page, array($this, 'load_visualizations_page_scripts' ) );
-		add_action( 'load-' . $ns_visualizations_page, array($this, 'load_visualizations_page_styles' ) );
+		add_action( 'load-' . $ns_analytics_page, array($this, 'load_analytics_page_scripts' ) );
+		add_action( 'load-' . $ns_analytics_page, array($this, 'load_analytics_page_styles' ) );
 
 		$read_cap = 'manage_network_options';
 		add_submenu_page( 'settings.php', 'WP Network Stats Settings', 'WP Network Stats', $read_cap, $this->menu_slug . '-settings', array( $this, 'show_network_settings' ) );
@@ -354,21 +355,20 @@ class Network_Stats_Admin {
 	}
 
 	/**
-	 * Prints the networks stats visualizations page.
+	 * Prints the networks stats analytics page.
      */
-	public function network_stats_visualizations_page()
+	public function network_stats_analytics_page()
 	{
 		?>
-		<div class="bootstrap-fluid">
+		<div class="bootstrap-fluid" id="analytics">
 			<div class="container-fluid">
 				<h2>WP Network Stats</h2>
-
-				<?php
-
-				?>
+				<h5><em>This page doesn't update with latest data automatically. Please generate the reports again and wait for the confirmation email to see latest analytics.</em></h5>
+				<h5><em>If you don't see any charts, you have to generate reports from Network Stats page first.</em></h5>
 				<div class="row">
 					<div class="col-md-12">
 						<h3>Number of Registerations</h3>
+						<div class="vis_loading"></div>
 						<div class="vis_registrations"><svg id="line_registrations"></svg></div>
 					</div>
 				</div>
@@ -386,19 +386,20 @@ class Network_Stats_Admin {
 						<div class="vis_db_version"><svg id="pie_db_version"></svg></div>
 					</div>
 				</div>
-				<div class=""row" style="display:none">
+				<div class="row" style="display:none">
 					<div class="col-md-12">
 						<h3>Site Registrations by time of day</h3>
 						<div class="vis_site_registrations"><svg id="scatter_site_registrations"></svg></div>
 					</div>
 				</div>
-				<div class=""row" >
+				<div class="row" >
 					<div class="col-md-12">
 						<h3>Multidimensional Detective</h3>
-						<div class="parcoords" id="vis_multidimensional_detective" style="height:300px"></div>
+						<div class="vis_multidimensional_detective"><div class="parcoords" id="parallel_multidimensional_detective" style="height:300px"></div></div>
+						<button type="button" id="btnExport" class="btn btn-primary">Export Selected Data</button>
 					</div>
 				</div>
-		</div>
+			</div>
 		</div>
 
 		<?php

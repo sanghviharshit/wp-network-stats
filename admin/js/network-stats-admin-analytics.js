@@ -31,15 +31,24 @@
 
 	$( window ).load(function() {
 
-		/*
-		 JS Date is number of milliseconds since 1970, PHP date is number of seconds since 1970.
-		 
-		var blog_registered_data = JSON.parse(data_to_js.blog_registered_data);
-		var user_registered_data = JSON.parse(data_to_js.user_registered_data);
+        var parcoords;
+        var brushed_data;
 
-		timeseries('timeseries blogs', blog_registered_data, false);
-		timeseries('timeseries users', user_registered_data, false);
-		*/
+        var analytics = $("analytics");
+        analytics.addClass("loading");
+
+
+		//waitingDialog.show('Please wait while your browser loads and processes the Network Stats.');
+
+        /*
+         JS Date is number of milliseconds since 1970, PHP date is number of seconds since 1970.
+
+        var blog_registered_data = JSON.parse(data_to_js.blog_registered_data);
+        var user_registered_data = JSON.parse(data_to_js.user_registered_data);
+
+        timeseries('timeseries blogs', blog_registered_data, false);
+        timeseries('timeseries users', user_registered_data, false);
+        */
 		var file_site_stats = data_to_js.file_site_stats;
 		var file_user_stats = data_to_js.file_user_stats;
 
@@ -52,11 +61,28 @@
             d3.csv(file_user_stats, function(error, file_user_data) {
 				csv_user_data = file_user_data;
 				handle_csv_site_data()
+                analytics.removeClass("loading");
 			});
 		});
 
+        d3.select('#btnExport').on('click', function() {export_brushed_data();})
+
         function show_parallel_coordinates() {
 
+            /*
+             1 : I would like my blog to be visible to everyone, including search engines (like Google, Sphere, Technorati) and archivers. (default)
+             0 : I would like to block search engines, but allow normal visitors.
+             -1: Visitors must have a login - anyone that is a registered user of Web Publishing @ NYU can gain access.
+             -2: Only registered users of this blogs can have access - anyone found under Users > All Users can have access.
+             -3: Only administrators can visit - good for testing purposes before making it live.
+             */
+            csv_site_data.forEach(function(d) {
+                    if(d.privacy == "1") { d.privacyString = "Public"; }
+                    if(d.privacy == "0") { d.privacyString = "Hidden"; }
+                    if(d.privacy == "-1") { d.privacyString = "Require Login"; }
+                    if(d.privacy == "-2") { d.privacyString = "Require Invite"; }
+                    if(d.privacy == "-3") { d.privacyString = "Private"; }
+            });
 
             var colorgen = d3.scale.ordinal()
                 .range(["#a6cee3","#1f78b4","#b2df8a","#33a02c",
@@ -69,15 +95,15 @@
 
 
             // linear color scale
-            var blue_to_brown = d3.scale.linear()
+            var color_range = d3.scale.linear()
                 .domain([-2, 1])
-                .range(["steelblue", "brown"])
+                .range(["Coral", "DarkKhaki"])
                 .interpolate(d3.interpolateLab);
 
             var dimensions = {
-                "privacy":
+                "privacyString":
                 {
-                    orient: 'right',
+                    //orient: 'left',
                     type: 'string',
                     tickPadding: 0,
                     innerTickSize: 8
@@ -99,12 +125,12 @@
              "last_updated", "admin_email"
              ])
              */
-            var parcoords = d3.parcoords()("#vis_multidimensional_detective")
+            parcoords = d3.parcoords()("#parallel_multidimensional_detective")
                 .data(csv_site_data)
                 .dimensions(dimensions)
                 //.color(color)
-                .color(function(d) { return blue_to_brown(d['privacy']); })  // quantitative color scale
-                .alpha(0.4)
+                .color(function(d) { return color_range(d['privacy']); })  // quantitative color scale
+                .alpha(0.5)
                 .composite("darken")
 				//.rotateLabels(false)
 				.render()
@@ -112,7 +138,83 @@
 				.mode("queue")
 				.reorderable()
 				.brushMode("1D-axes")
+                //.autoscale()
+                ;
+
+            parcoords.on("brush", function(d) {
+                set_brushed_data(d);
+            });
+
+            /*
+            window.onresize = function() {
+                parcoords.resize();
+
+            };
+            */
+
+            function set_brushed_data(d) {
+                brushed_data = d
+            }
+
+            /*
+            var explore_count = 0;
+            var exploring = {};
+            var explore_start = false;
+            parcoords.svg
+                .selectAll(".dimension")
+                .style("cursor", "pointer")
+                .on("click", function(d) {
+                    exploring[d] = d in exploring ? false : true;
+                    event.preventDefault();
+                    if (exploring[d]) d3.timer(explore(d,explore_count));
+                });
+
+            function explore(dimension,count) {
+                if (!explore_start) {
+                    explore_start = true;
+                    d3.timer(parcoords.brush);
+                }
+                var speed = (Math.round(Math.random()) ? 1 : -1) * (Math.random()+0.5);
+                return function(t) {
+                    if (!exploring[dimension]) return true;
+                    var domain = parcoords.yscale[dimension].domain();
+                    var width = (domain[1] - domain[0])/4;
+
+                    var center = width*1.5*(1+Math.sin(speed*t/1200)) + domain[0];
+
+                    parcoords.yscale[dimension].brush.extent([
+                        d3.max([center-width*0.01, domain[0]-width/400]),
+                        d3.min([center+width*1.01, domain[1]+width/100])
+                    ])(parcoords.g()
+                        .filter(function(d) {
+                            return d == dimension;
+                        })
+                    );
+                };
+            };
+            */
         }
+
+        function export_brushed_data() {
+            var csvContent = "data:text/csv;charset=utf-8,";
+
+            if (!brushed_data) {
+                brushed_data = csv_site_data;
+            }
+
+            var dataString = d3.csv.format(brushed_data);
+
+            csvContent += dataString;
+            var encodedUri = encodeURI(csvContent);
+            var link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "selected_sites_stats.csv");
+            document.body.appendChild(link); // Required for FF
+
+            link.click();
+            //console.log(d);
+        }
+
 
 
 
