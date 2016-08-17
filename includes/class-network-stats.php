@@ -179,8 +179,8 @@ class Network_Stats {
 		$plugin_admin = new Network_Stats_Admin( $this->get_plugin_name(), $this->get_version() );
 
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles', 10, 1 );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts', 10, 1 );
+		//$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles', 10, 1 );
+		//$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts', 10, 1 );
 
 		/* Add action to whitelist options that the form is able to save. */
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );

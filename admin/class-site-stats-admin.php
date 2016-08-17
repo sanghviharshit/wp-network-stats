@@ -405,10 +405,10 @@ class Site_Stats_Admin
             $args['offset'] = $offset;
 
             wp_schedule_single_event(time() + $in_seconds, 'cron_refresh_site_stats', array($args));
-            Network_Stats_Helper::write_log('Site Stats Args: ' . print_r($args, $return = true) . ', count: ' . count($blog_list) . "\n");
+            Network_Stats_Helper::write_log('Site Stats Args: ' . print_r($args, $return = true) . ', count: ' . $count_blogs . "\n");
         } else {
             wp_schedule_single_event(time() + $in_seconds, 'cron_send_notification_email', array($args));
-            Network_Stats_Helper::write_log('Scheduling Email: $args' . print_r($args, $return = true) . ', count:' . count($blog_list) . "\n");
+            Network_Stats_Helper::write_log('Scheduling Email: $args' . print_r($args, $return = true) . ', count:' . $count_blogs . "\n");
         }
 
     }
@@ -430,7 +430,7 @@ class Site_Stats_Admin
             'current_theme' => 'current_theme',
             'themes_allowed_per_site' => 'themes_allowed_per_site',
 
-            'posts_count' => 'posts_count',
+            //'posts_count' => 'posts_count',
             'posts_published' => 'posts_published',
             'posts_future' => 'posts_future',
             'posts_draft' => 'posts_draft',

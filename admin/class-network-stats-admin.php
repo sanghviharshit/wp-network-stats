@@ -89,8 +89,8 @@ class Network_Stats_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
-		wp_enqueue_style( $this->plugin_name . '-admin', plugin_dir_url( __FILE__ ) . 'css/network-stats-admin.css', array(), $this->version, 'all' );
+		//wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
+		//wp_enqueue_style( $this->plugin_name . '-admin', plugin_dir_url( __FILE__ ) . 'css/network-stats-admin.css', array('bootstrap'), $this->version, 'all' );
 	}
 
 	/**
@@ -115,8 +115,10 @@ class Network_Stats_Admin {
 
 	public function load_analytics_page_styles() {
 		//wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
-		wp_enqueue_style( 'nv-d3', plugin_dir_url( __FILE__ ) . '../vendor/nv.d3/nv.d3.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'nv-d3', plugin_dir_url( __FILE__ ) . '../vendor/nv.d3/nv.d3.min.css', false, $this->version, 'all' );
 		wp_enqueue_style( 'parcoords', plugin_dir_url( __FILE__ ) . '../vendor/parcoords/d3.parcoords.css', false, $this->version, 'all');
+		wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
+		wp_enqueue_style( $this->plugin_name . '-admin', plugin_dir_url( __FILE__ ) . 'css/network-stats-admin.css', array('bootstrap'), $this->version, 'all' );
 		//wp_enqueue_style( $this->plugin_name . '-highlight', plugin_dir_url( __FILE__ ) . 'css/highlight.css', array(), $this->version, 'all' );
 		//wp_enqueue_style( $this->plugin_name . '-google', "https://fonts.googleapis.com/css?family=Open+Sans:400,700", array(), $this->version, 'all' );
 	}
@@ -129,12 +131,12 @@ class Network_Stats_Admin {
 		wp_enqueue_script( 'd3', plugin_dir_url( __FILE__ ) . '../vendor/d3/d3.min.js', array(), $this->version, false );
 		//wp_enqueue_script('d3', "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js", false);
 		wp_enqueue_script('nv-d3', plugin_dir_url(__FILE__) . '../vendor/nv.d3/nv.d3.min.js', array('d3'), $this->version, false);
-		wp_enqueue_script( 'd3-svg-multibrush', plugin_dir_url( __FILE__ ) . '../vendor/d3/d3.svg.multibrush.js', array('d3'), $this->version, false );
+		wp_enqueue_script('d3-svg-multibrush', plugin_dir_url( __FILE__ ) . '../vendor/d3/d3.svg.multibrush.js', array('d3'), $this->version, false );
 		wp_enqueue_script('parcoords', plugin_dir_url(__FILE__) . '../vendor/parcoords/d3.parcoords.js', array('d3'), $this->version, false);
 		wp_enqueue_script(
 			$this->plugin_name . '-analytics',
 			plugin_dir_url(__FILE__) . 'js/network-stats-admin-analytics.js',
-			array('jquery', 'nv-d3'),
+			array('jquery', 'nv-d3', 'parcoords'),
 			$this->version,
 			false
 		);
@@ -249,6 +251,9 @@ class Network_Stats_Admin {
 			'network_stats_analytics_page'
 		) );
 		// http://wordpress.stackexchange.com/questions/41207/how-do-i-enqueue-styles-scripts-on-certain-wp-admin-pages
+		add_action( 'load-' . $ns_home_page, array($this, 'enqueue_scripts' ) );
+		add_action( 'load-' . $ns_home_page, array($this, 'enqueue_styles' ) );
+
 		add_action( 'load-' . $ns_analytics_page, array($this, 'load_analytics_page_scripts' ) );
 		add_action( 'load-' . $ns_analytics_page, array($this, 'load_analytics_page_styles' ) );
 
@@ -691,7 +696,7 @@ class Network_Stats_Admin {
 			'sites' => array(
 				'name' => 'Site Stats',
 				'description' => 'Site stats for all the sites in the network.',
-				'icon' => 'admin-site'
+				'icon' => 'admin-multisite'
 				),
 			'users_per_site' => array(
 				'name' =>'User Stats per Site',

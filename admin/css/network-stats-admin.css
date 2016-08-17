@@ -37,11 +37,6 @@ a {
 }
 
 .vis_loading {
-    background: rgba( 255, 255, 255, .8 )
-        url('http://i.stack.imgur.com/FhHRx.gif')
-        50% 50%
-        no-repeat;
-
     height:     100%;
     width:      100%;
 }
@@ -99,7 +94,7 @@ a {
  */
 
 body {
-    background: #fcfcfc;
+    background: #f1f1f1;
 }
 a {
     color: #555;

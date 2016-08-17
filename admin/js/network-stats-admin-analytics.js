@@ -34,11 +34,7 @@
         var parcoords;
         var brushed_data;
 
-        var analytics = $("analytics");
-        analytics.addClass("loading");
-
-
-		//waitingDialog.show('Please wait while your browser loads and processes the Network Stats.');
+        //waitingDialog.show('Please wait while your browser loads and processes the Network Stats.');
 
         /*
          JS Date is number of milliseconds since 1970, PHP date is number of seconds since 1970.
@@ -57,15 +53,13 @@
 
 		d3.csv(file_site_stats, function(error, file_site_data) {
 			csv_site_data = file_site_data;
-			show_parallel_coordinates();
-            d3.csv(file_user_stats, function(error, file_user_data) {
+			d3.csv(file_user_stats, function(error, file_user_data) {
 				csv_user_data = file_user_data;
 				handle_csv_site_data()
-                analytics.removeClass("loading");
+				show_parallel_coordinates();
+				d3.select('#btnExport').on('click', function() { export_brushed_data(); })
 			});
 		});
-
-        d3.select('#btnExport').on('click', function() {export_brushed_data();})
 
         function show_parallel_coordinates() {
 
@@ -103,18 +97,34 @@
             var dimensions = {
                 "privacyString":
                 {
+					title: "Privacy",
                     //orient: 'left',
                     type: 'string',
                     tickPadding: 0,
                     innerTickSize: 8
                 },
-                "users_count":{type:"number"},
+                "users_count":{
+					title: "Users",
+                	type:"number"
+                },
 				//"blog_id":{type:"number"},
-                "active_plugins_count":{type:"number"},
+                "active_plugins_count":{
+					title: "Active Plugins",
+                	type:"number"
+                },
                 //"current_theme":
-                "posts_published":{type:"number"},
-                "comments_count":{type:"number"},
-                "attachments_count":{type:"number"},
+                "posts_published":{
+					title: "Posts",
+                	type:"number"
+                },
+                "comments_count":{
+					title: "Comments",
+                	type:"number"
+                },
+                "attachments_count":{
+					title: "Attachments",
+                	type:"number"
+                },
             };
 
             /*
@@ -125,10 +135,11 @@
              "last_updated", "admin_email"
              ])
              */
-            parcoords = d3.parcoords()("#parallel_multidimensional_detective")
+            parcoords = d3.parcoords({nullValueSeparator: "bottom"})("#parallel_multidimensional_detective")
                 .data(csv_site_data)
                 .dimensions(dimensions)
                 //.color(color)
+				.margin({ top: 30, left: 30, bottom: 30, right: 30 })
                 .color(function(d) { return color_range(d['privacy']); })  // quantitative color scale
                 .alpha(0.5)
                 .composite("darken")
@@ -138,19 +149,22 @@
 				.mode("queue")
 				.reorderable()
 				.brushMode("1D-axes")
+				.brushPredicate("OR")
                 //.autoscale()
+				.createAxes()
                 ;
 
             parcoords.on("brush", function(d) {
                 set_brushed_data(d);
             });
 
-            /*
+
             window.onresize = function() {
-                parcoords.resize();
+            	parcoords.width(d3.select("#parallel_multidimensional_detective").node().getBoundingClientRect().width)
+            		.resize()
+					.render();
 
             };
-            */
 
             function set_brushed_data(d) {
                 brushed_data = d

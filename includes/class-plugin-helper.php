@@ -94,15 +94,15 @@ class Network_Stats_Helper {
 		$blog_list = array();
 	
 		$defaults = array(
-        'network_id' => $wpdb->siteid,
-        'public'     => null,
-        'archived'   => null,
-        'mature'     => null,
-        'spam'       => null,
-        'deleted'    => null,
-        'limit'      => 10000,
-        'offset'     => 0,
-    );
+            'network_id' => $wpdb->siteid,
+            'public'     => null,
+            'archived'   => null,
+            'mature'     => null,
+            'spam'       => null,
+            'deleted'    => null,
+            'limit'      => 10000,
+            'offset'     => 0,
+        );
  
     $args = wp_parse_args( $args, $defaults );
 
