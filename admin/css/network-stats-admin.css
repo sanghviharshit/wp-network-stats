@@ -50,6 +50,40 @@ a {
 /**
  * All of the CSS for your network stats visualization page only
  */
+
+.h-divider{
+    margin-top:5px;
+    margin-bottom:5px;
+    height:1px;
+    width:100%;
+    border-top:1px solid gray;
+}
+
+.v-divider{
+    height:100%;
+    border-left:1px solid gray;
+}
+
+#vis_loading_block {
+    margin: 25px 20px 0 2px;
+}
+
+.vis_loading {
+    background: url('../images/loader-animation.gif')
+        50% 50%
+        no-repeat;
+    height:     31px;
+    width:      31px;
+    float: left;
+    margin-right: 15px;
+}
+
+#vis_loading_error {
+    display: none;
+    margin: 25px 20px 0 2px;
+}
+
+
 #vis_privacy {
     /*float: left;*/
     margin: 0px;
@@ -104,9 +138,6 @@ a:hover {
 }
 .dark {
     background: #222;
-}
-p {
-    width: 560px;
 }
 pre {
     color: #444;

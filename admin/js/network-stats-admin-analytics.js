@@ -51,15 +51,42 @@
 		var csv_site_data;
 		var csv_user_data;
 
-		d3.csv(file_site_stats, function(error, file_site_data) {
-			csv_site_data = file_site_data;
-			d3.csv(file_user_stats, function(error, file_user_data) {
-				csv_user_data = file_user_data;
-				handle_csv_site_data()
-				show_parallel_coordinates();
-				d3.select('#btnExport').on('click', function() { export_brushed_data(); })
+		function init_visualizations() {
+			load_file_site_stats();
+		}
+
+		function load_file_site_stats() {
+			d3.csv(file_site_stats, function(error, file_site_data) {
+				if (error) {  //If error is not null, something went wrong.
+					//console.log(error);  //Log the error.
+					$('#vis_loading_block').hide();
+					$('#vis_loading_error').show();
+				} else {      //If no error, the file loaded correctly. Yay!
+					//console.log(data);   //Log the data.
+					csv_site_data = file_site_data;
+					load_file_user_stats();
+				}
 			});
-		});
+		}
+		function load_file_user_stats() {
+			d3.csv(file_user_stats, function (error, file_user_data) {
+				if (error) {  //If error is not null, something went wrong.
+					//console.log(error);  //Log the error.
+					$('#vis_loading_block').hide();
+					$('#vis_loading_error').show();
+				} else {      //If no error, the file loaded correctly. Yay!
+					csv_user_data = file_user_data;
+					handle_csv_site_data()
+					show_parallel_coordinates();
+
+					$('#vis_loading_block').hide();
+
+					d3.select('#btnExport').on('click', function () {
+						export_brushed_data();
+					})
+				}
+			});
+		}
 
         function show_parallel_coordinates() {
 
@@ -151,7 +178,7 @@
 				.brushMode("1D-axes")
 				.brushPredicate("OR")
                 //.autoscale()
-				.createAxes()
+				//.createAxes()	//Can't use brush if called
                 ;
 
             parcoords.on("brush", function(d) {
@@ -228,9 +255,6 @@
             link.click();
             //console.log(d);
         }
-
-
-
 
 		function handle_csv_site_data() {
 
@@ -699,87 +723,7 @@
 
 		}
 
-
-/*
-		var testdata = [
-		        {key: "One", y: 5},
-		        {key: "Two", y: 2},
-		        {key: "Three", y: 9},
-		        {key: "Four", y: 7},
-		        {key: "Five", y: 4},
-		        {key: "Six", y: 3},
-		        {key: "Seven", y: 0.5}
-		    ];
-
-		    var height = 350;
-		    var width = 350;
-		    nv.addGraph(function() {
-		        var chart = nv.models.pieChart()
-		            .x(function(d) { return d.key })
-		            .y(function(d) { return d.value })
-		            .width(width)
-		            .height(height)
-		            .showTooltipPercent(true);
-		        d3.select("#pie_site_privacy")
-		            .datum(testdata)
-		            .transition().duration(1200)
-		            .attr('width', width)
-		            .attr('height', height)
-		            .call(chart);
-		        return chart;
-		    });
-
-*/
-		    /*
-		    nv.addGraph(function() {
-		        var chart = nv.models.pieChart()
-		            .x(function(d) { return d.key })
-		            .y(function(d) { return d.y })
-		            //.labelThreshold(.08)
-		            //.showLabels(false)
-		            .color(d3.scale.category20().range().slice(8))
-		            .growOnHover(false)
-		            .labelType('value')
-		            .width(width)
-		            .height(height);
-		        // make it a half circle
-		        chart.pie
-		            .startAngle(function(d) { return d.startAngle/2 -Math.PI/2 })
-		            .endAngle(function(d) { return d.endAngle/2 -Math.PI/2 });
-		        // MAKES LABELS OUTSIDE OF PIE/DONUT
-		        //chart.pie.donutLabelsOutside(true).donut(true);
-		        // LISTEN TO CLICK EVENTS ON SLICES OF THE PIE/DONUT
-		        // chart.pie.dispatch.on('elementClick', function() {
-		        //     code...
-		        // });
-		        // chart.pie.dispatch.on('chartClick', function() {
-		        //     code...
-		        // });
-		        // LISTEN TO DOUBLECLICK EVENTS ON SLICES OF THE PIE/DONUT
-		        // chart.pie.dispatch.on('elementDblClick', function() {
-		        //     code...
-		        // });
-		        // LISTEN TO THE renderEnd EVENT OF THE PIE/DONUT
-		        // chart.pie.dispatch.on('renderEnd', function() {
-		        //     code...
-		        // });
-		        // OTHER EVENTS DISPATCHED BY THE PIE INCLUDE: elementMouseover, elementMouseout, elementMousemove
-		        // @see nv.models.pie
-		        d3.select("#test2")
-		            .datum(testdata)
-		            .transition().duration(1200)
-		            .attr('width', width)
-		            .attr('height', height)
-		            .call(chart);
-		        // disable and enable some of the sections
-		        var is_disabled = false;
-		        setInterval(function() {
-		            chart.dispatch.changeState({disabled: {2: !is_disabled, 4: !is_disabled}});
-		            is_disabled = !is_disabled;
-		        }, 3000);
-		        return chart;
-		    });
-		    */
+		init_visualizations();
 	});
 
 })( jQuery );

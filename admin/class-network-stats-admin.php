@@ -215,9 +215,15 @@ class Network_Stats_Admin {
 
 				exit;
 			}
+		}
+
+		if(isset($_GET['file'])) {
+			header("HTTP/1.0 404 Not Found");
+			exit;
 		} else {
 			return;
 		}
+
 	}
 
 	/**
@@ -367,26 +373,36 @@ class Network_Stats_Admin {
 		?>
 		<div class="bootstrap-fluid" id="analytics">
 			<div class="container-fluid">
-				<h2>WP Network Stats</h2>
-				<h5><em>This page doesn't update with latest data automatically. Please generate the reports again and wait for the confirmation email to see latest analytics.</em></h5>
-				<h5><em>If you don't see any charts, you have to generate reports from Network Stats page first.</em></h5>
-				<div class="row">
+				<div class="error" id="vis_loading_error"><p><strong>There was an error downloading some/all of analytics data. Please refresh stats.</strong></p></div>
+
+				<h2>WP Network Stats <a href="<?php echo network_admin_url( 'admin.php?page=' . $this->plugin_name ) ?>" role="button" class="btn btn-warning">Refresh Stats</a></h2>
+				<div class="update-nag">
+					<p>This page doesn't update with latest data automatically. Please <strong>Refresh Stats</strong> and wait for the confirmation email to see latest analytics.</p>
+					<p>If you don't see any charts, you have to generate reports from Network Stats page first.</p>
+				</div>
+				<h4 id="vis_loading_block">
+					<div class="vis_loading"></div>
+					<div>Loading data for Analytics.</div>
+				</h4>
+
+				<div class="row ">
 					<div class="col-md-12">
 						<h3>Number of Registerations</h3>
-						<div class="vis_loading"></div>
 						<div class="vis_registrations"><svg id="line_registrations"></svg></div>
 					</div>
+				</div>
+				<div class="h-divider">
 				</div>
 				<div class="row">
 					<div class="col-md-4">
 						<h3>Site Privacy</h3>
 						<div class="vis_privacy with-transitions" id="vis_privacy"><svg id="pie_privacy"></svg></div>
 					</div>
-					<div class="col-md-4">
+					<div class="col-md-4 v-divider">
 						<h3>Curent Theme</h3>
 						<div class="vis_theme"><svg id="pie_theme"></svg></div>
 					</div>
-					<div class="col-md-4">
+					<div class="col-md-4 v-divider">
 						<h3>DB Version</h3>
 						<div class="vis_db_version"><svg id="pie_db_version"></svg></div>
 					</div>
@@ -396,6 +412,8 @@ class Network_Stats_Admin {
 						<h3>Site Registrations by time of day</h3>
 						<div class="vis_site_registrations"><svg id="scatter_site_registrations"></svg></div>
 					</div>
+				</div>
+				<div class="h-divider">
 				</div>
 				<div class="row" >
 					<div class="col-md-12">
