@@ -16,7 +16,7 @@
  * Plugin Name:       WP Network Stats
  * Plugin URI:        https://github.com/sanghviharshit/wp-network-stats
  * Description:       View/Export useful network statistics related to sites, users per site, plugins per site, themes and plugins for all the sites in a WordPress multisite network.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            Harshit Sanghvi
  * Author URI:        http://about.me/harshit
  * License:           GPL-2.0+
@@ -80,7 +80,7 @@ function run_network_stats() {
  */
 function set_globals() {
 	if ( ! defined( 'NS_VERSION' ) )
-		define( 'NS_VERSION', '1.0.2' );
+		define( 'NS_VERSION', '1.0.3' );
 	if ( ! defined( 'NS_PLUGIN' ) )
 		define( 'NS_PLUGIN', plugin_basename( __FILE__ ) );
 	if ( ! defined( 'NS_DIR' ) )
