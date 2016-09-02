@@ -3,18 +3,18 @@
  * included in this file.
  */
 
-/** Styles for Demo Application */
-
-body {
-    font: 16px 'Open Sans';
-    color: #2C3E50;
+label {
+    font-weight: 500;
+}
+input[type=checkbox], input[type=radio] {
+    margin: 0;
+}
+.highlight {
+    background-color: transparent;
 }
 a {
     text-decoration: none;
     color: #3498DB;
-}
-.container {
-    margin: 1%;
 }
 .text {
     width: 100%;
@@ -25,102 +25,144 @@ a {
     padding: 10px 0px;
     text-align: center;
 }
-code {
-    width: 95%;
-    margin: auto;
-    text-align: center;
-}
-@media screen and (min-width: 800px) {
-    code {
-        width: 70%;
-    }
-}
-.header {
-    width: 100%;
-    text-align: center;
-    margin: 1% 0;
-}
-.header img {
-    padding-top: 10px;
-}
-.header div {
-    font-weight: 700;
-    font-size: 1.6em;
-    padding-top: 10px;
-}
-.dac-logo {
-    display: none;
-}
-@media screen and (min-width: 800px) {
-    .dac-logo {
-        display: block;
-        position: absolute;
-        left: 5px;
-        top: 5px;
-    }
-    .dac-logo img {
-        width: 120px;
-    }
-}
-.contact {
-    width: 50%;
-    margin: auto;
-    text-align: center;
-}
-.footer {
-    font-size: 0.9em;
-    text-align: center;
-    padding: 5px;
-}
-/** Styles for TIMESERIES */
 
-.timeseries {
+/**
+ * All of the CSS for overriding bootstrap styles only
+ */
+.container {
     width: 100%;
-    padding: 2% 0;
+}
+.container .row {
+    margin-bottom: 30px;
 }
 
-.users .circ {
-    fill: #00D354;
-    opacity: 0.6;
-    stroke: rgba(0, 211, 84, 0.7);
-    stroke-width: 5px;
+.vis_loading {
+    height:     100%;
+    width:      100%;
 }
 
-.blogs .circ {
-    fill: #D35400;
-    opacity: 0.6;
-    stroke: rgba(211, 84, 0, 0.7);
-    stroke-width: 5px;
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+#analytics.loading .vis_loading {
+    display: block;
 }
-.domain {
+
+/**
+ * All of the CSS for your network stats visualization page only
+ */
+
+.h-divider{
+    margin-top:5px;
+    margin-bottom:5px;
+    height:1px;
+    width:100%;
+    border-top:1px solid gray;
+}
+
+.v-divider{
+    height:100%;
+    border-left:1px solid gray;
+}
+
+#vis_loading_block {
+    margin: 25px 20px 0 2px;
+}
+
+.vis_loading {
+    background: url('../images/loader-animation.gif')
+        50% 50%
+        no-repeat;
+    height:     31px;
+    width:      31px;
+    float: left;
+    margin-right: 15px;
+}
+
+#vis_loading_error {
     display: none;
+    margin: 25px 20px 0 2px;
 }
-.axis path, .axis line {
-    fill: none;
-    stroke: #000;
-    shape-rendering: crispEdges;
-}
-.axis text {
-    font-size: 12px;
-}
-.tick line {
-    stroke: #d5d5d5;
-    opacity: 0.7;
-}
-.brush .extent {
-    stroke: #fff;
-    fill-opacity: .125;
-    shape-rendering: crispEdges;
-}
-.clear-brush {
-    display: none;
-}
-.brush-control {
-    padding: .5%;
+
+
+#vis_privacy {
+    /*float: left;*/
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
     width: 100%;
+}
+#vis_theme {
+    /*float: left;*/
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+}
+#vis_db_version {
+    /*float: left;*/
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+}
+#vis_registrations {
+    /*float: left;*/
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+}
+#vis_multidimensional_detective {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+}
+.parcoords {
+    /*background-color: transparent;*/
+    background-color: rgb(252, 252, 252);
+}
+
+/**
+ * From style.css of example for parcoords
+ */
+
+body {
+    background: #f1f1f1;
+}
+a {
+    color: #555;
+}
+a:hover {
+    color: #000;
+}
+.dark {
+    background: #222;
+}
+pre {
+    color: #444;
+    font-family: Ubuntu Mono, Monaco, monospace;
+    padding: 4px 8px;
+    background: #f2f2f2;
+    border: 1px solid #ccc;
+}
+h1 small {
+    font-weight: normal;
+    font-size: 0.5em;
+}
+h3 {
+    margin-top: 40px;
+}
+.float {
+    float: left;
+}
+.centered {
     text-align: center;
 }
-.brush-info {
-    display: inline-block;
-    font-size: 14px;
+.hide {
+    display: none;
 }
+input {
+    font-size: 16px;
+}
+

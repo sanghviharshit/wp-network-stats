@@ -179,8 +179,8 @@ class Network_Stats {
 		$plugin_admin = new Network_Stats_Admin( $this->get_plugin_name(), $this->get_version() );
 
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles', 10, 1 );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts', 10, 1 );
+		//$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles', 10, 1 );
+		//$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts', 10, 1 );
 
 		/* Add action to whitelist options that the form is able to save. */
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
@@ -197,6 +197,9 @@ class Network_Stats {
 		
 		/* Add action to display the menu items in Network Admin's Dashboard */
 		$this->loader->add_action( 'network_admin_menu', $plugin_admin, 'register_menu' );
+
+		/* Add action to handle file requests */
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'handle_file_requests' );
 
 		/* Add action to run when cron job fires */
 		$this->loader->add_action( 'cron_generate_reports', $plugin_admin, 'generate_reports', 10, 3 );

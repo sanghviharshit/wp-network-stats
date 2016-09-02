@@ -122,7 +122,7 @@ class Plugin_Stats_Admin {
 		// }
 		$report_plugin_stats = $report_dirname . '/' . 'plugin-stats.csv';
 		$file_plugin_stats = fopen($report_plugin_stats,"w");
-		chmod($report_plugin_stats,0644);
+		chmod($report_plugin_stats,NS_STATS_FILE_PERMISSION);
 
 		foreach ($ns_plugin_data as $plugin_data) {
     		fputcsv($file_plugin_stats, $plugin_data);

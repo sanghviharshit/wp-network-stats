@@ -13,7 +13,7 @@
 /**
  * The dashboard-specific functionality of the plugin.
  *
- * Defines the plugin name, version, and two examples hooks for how to
+ * Defines the plugin name, version, and hooks for how to
  * enqueue the dashboard-specific stylesheet and JavaScript.
  *
  * @package    Network_Stats
@@ -89,7 +89,8 @@ class Network_Stats_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/network-stats-admin.css', array(), $this->version, 'all' );
+		//wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
+		//wp_enqueue_style( $this->plugin_name . '-admin', plugin_dir_url( __FILE__ ) . 'css/network-stats-admin.css', array('bootstrap'), $this->version, 'all' );
 	}
 
 	/**
@@ -112,46 +113,117 @@ class Network_Stats_Admin {
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/network-stats-admin.js', array('jquery'), $this->version, false);
 	}
 
-	public function load_visualization_page_styles() {
-		wp_enqueue_style( $this->plugin_name . '-highlight', plugin_dir_url( __FILE__ ) . 'css/highlight.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name . '-google', "https://fonts.googleapis.com/css?family=Open+Sans:400,700", array(), $this->version, 'all' );
+	public function load_analytics_page_styles() {
+		//wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
+		wp_enqueue_style( 'nv-d3', plugin_dir_url( __FILE__ ) . '../vendor/nv.d3/nv.d3.min.css', false, $this->version, 'all' );
+		wp_enqueue_style( 'parcoords', plugin_dir_url( __FILE__ ) . '../vendor/parcoords/d3.parcoords.css', false, $this->version, 'all');
+		wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . '../vendor/bootstrap/css/bootstrap.min.css', false, $this->version, 'all');
+		wp_enqueue_style( $this->plugin_name . '-admin', plugin_dir_url( __FILE__ ) . 'css/network-stats-admin.css', array('bootstrap'), $this->version, 'all' );
+		//wp_enqueue_style( $this->plugin_name . '-highlight', plugin_dir_url( __FILE__ ) . 'css/highlight.css', array(), $this->version, 'all' );
+		//wp_enqueue_style( $this->plugin_name . '-google', "https://fonts.googleapis.com/css?family=Open+Sans:400,700", array(), $this->version, 'all' );
 	}
 	/**
-	 * Load the JS for Visualization page.
+	 * Load the JS for Analytics page.
      */
-	public function load_visualization_page_scripts() {
-		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/network-stats-admin-visualization.js', array('jquery'), $this->version, false);
-		wp_enqueue_script($this->plugin_name . '-timeseries', plugin_dir_url(__FILE__) . 'js/timeseries.js', array(), $this->version, true);
-		wp_enqueue_script($this->plugin_name . '-d3', "https://d3js.org/d3.v3.min.js", false);
+	public function load_analytics_page_scripts() {
+		//wp_enqueue_script($this->plugin_name . '-timeseries', plugin_dir_url(__FILE__) . 'js/timeseries.js', array(), $this->version, true);
+		//wp_enqueue_script($this->plugin_name . '-d3', "https://d3js.org/d3.v3.min.js", false);
+		wp_enqueue_script( 'd3', plugin_dir_url( __FILE__ ) . '../vendor/d3/d3.min.js', array(), $this->version, false );
+		//wp_enqueue_script('d3', "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js", false);
+		wp_enqueue_script('nv-d3', plugin_dir_url(__FILE__) . '../vendor/nv.d3/nv.d3.min.js', array('d3'), $this->version, false);
+		wp_enqueue_script('d3-svg-multibrush', plugin_dir_url( __FILE__ ) . '../vendor/d3/d3.svg.multibrush.js', array('d3'), $this->version, false );
+		wp_enqueue_script('parcoords', plugin_dir_url(__FILE__) . '../vendor/parcoords/d3.parcoords.js', array('d3'), $this->version, false);
+		wp_enqueue_script(
+			$this->plugin_name . '-analytics',
+			plugin_dir_url(__FILE__) . 'js/network-stats-admin-analytics.js',
+			array('jquery', 'nv-d3', 'parcoords'),
+			$this->version,
+			false
+		);
+		/*
 		wp_enqueue_script($this->plugin_name . '-lodash', "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.1.0/lodash.min.js", array(), $this->version, false);
 		wp_enqueue_script($this->plugin_name . '-moment', "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js", array(), $this->version, false);
 		wp_enqueue_script($this->plugin_name . '-highlight', "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js", array(), $this->version, false);
+		*/
 
-		$blog_list = Network_Stats_Helper::get_network_blog_list();
-		$blog_registered = array();
-		foreach ($blog_list as $blog) {
-			if (($timestamp = strtotime($blog['registered'])) === false) {
-				// Skip this.
-			} else {
+		$file_path_url = network_admin_url( 'admin.php?page=' . $this->plugin_name . '-analytics' . '&file=');
+		$data_to_js = array(
+			'file_site_stats' => $file_path_url . 'site-stats.csv',
+			'file_user_stats' => $file_path_url . 'user-stats.csv',
+			'file_plugin_stats' => $file_path_url . 'plugin-stats.csv',
+			'file_theme_stats' => $file_path_url . 'theme-stats.csv',
+			'file_plugin_stats_per_site' => $file_path_url . 'plugin-stats-per-site.csv',
+			'file_user_stats_per_site' => $file_path_url . 'user-stats-per-site.csv',
+		);
+		wp_localize_script($this->plugin_name . '-analytics', 'data_to_js', $data_to_js);
+	}
+
+	/**
+	 * Handle File download requests
+	 */
+	public function handle_file_requests() {
+		//global $pagenow;
+		//die(var_dump($_GET));
+		//if ($pagenow=='admin.php' &&
+		if (isset($_GET['page']) &&
+			$_GET['page'] = $this->plugin_name . '-analytics' &&
+			current_user_can('manage_network') &&
+			isset($_GET['file']) ) {
+
+			$path_parts = pathinfo($_GET['file']);
+			$file_name  = $path_parts['basename'];
+
+			$file_path = NS_REPORT_DIRNAME . '/' . $file_name;
+
+			if (file_exists($file_path) && is_file($file_path)) {
+				header('Content-Type: application/octet-stream');
+				header('Content-Disposition: attachment; filename="'.$file_name.'"');
+
+				//For IE6
+				header("Pragma: public");
+				header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+
+				header('Expires: 0');
+				header('Cache-Control: must-revalidate');
+				header('Pragma: public');
+				header('Content-Length: ' . filesize($file_path));
+
+
+				readfile($file_path);
+
+				/**
+				 * The following code is added to handle large files
+				 */
 				/*
-					JS Date is number of milliseconds since 1970, PHP date is number of seconds since 1970.
-			 	*/
-				$blog_registered[] = array('value' => $timestamp * 1000);
+				flush();
+				// set the download rate limit (=> 20,5 kb/s)
+				$download_rate = 20.5;
+				$file = fopen($file_path, "rb");
+				while(!feof($file))
+				{
+					// send the current file part to the browser
+					print fread($file, round($download_rate * 1024));
+					// flush the content to the browser
+					ob_flush();
+					flush();
+					// sleep one second
+					//sleep(1);
+				}
+				fclose($file);
+				*/
+				// End: Handle large file code block
+
+				exit;
 			}
 		}
-		//Network_Stats_Helper::write_log(json_encode($blog_registered));
 
-		$user_registered = array();
-		$user_list = Network_Stats_Helper::get_list_all_users();
-		foreach ($user_list as $user) {
-			$user_registered[] = array('value' => (strtotime($user->user_registered) * 1000));
+		if(isset($_GET['file'])) {
+			header("HTTP/1.0 404 Not Found");
+			exit;
+		} else {
+			return;
 		}
-		//Network_Stats_Helper::write_log(json_encode($user_registered));
-		$data_to_js = array(
-			'blog_registered_data' => json_encode($blog_registered),
-			'user_registered_data' => json_encode($user_registered),
-		);
-		wp_localize_script($this->plugin_name, 'data_to_js', $data_to_js);
+
 	}
 
 	/**
@@ -180,13 +252,16 @@ class Network_Stats_Admin {
 		), 'dashicons-analytics', '3.756789' );
 
 		$read_cap = 'manage_network';
-		$ns_visualization_page = add_submenu_page ( $this->plugin_name, 'Visualizations', 'Visualizations', $read_cap, $this->menu_slug . '-visualizations', array (
+		$ns_analytics_page = add_submenu_page ( $this->plugin_name, 'Analytics', 'Analytics', $read_cap, $this->menu_slug . '-analytics', array (
 			$this,
-			'network_stats_visualization_page'
+			'network_stats_analytics_page'
 		) );
 		// http://wordpress.stackexchange.com/questions/41207/how-do-i-enqueue-styles-scripts-on-certain-wp-admin-pages
-		add_action( 'load-' . $ns_visualization_page, array($this, 'load_visualization_page_scripts' ) );
-		add_action( 'load-' . $ns_visualization_page, array($this, 'load_visualization_page_styles' ) );
+		add_action( 'load-' . $ns_home_page, array($this, 'enqueue_scripts' ) );
+		add_action( 'load-' . $ns_home_page, array($this, 'enqueue_styles' ) );
+
+		add_action( 'load-' . $ns_analytics_page, array($this, 'load_analytics_page_scripts' ) );
+		add_action( 'load-' . $ns_analytics_page, array($this, 'load_analytics_page_styles' ) );
 
 		$read_cap = 'manage_network_options';
 		add_submenu_page( 'settings.php', 'WP Network Stats Settings', 'WP Network Stats', $read_cap, $this->menu_slug . '-settings', array( $this, 'show_network_settings' ) );
@@ -195,16 +270,16 @@ class Network_Stats_Admin {
 		$read_cap = 'manage_network_options';
 		add_submenu_page ( $this->plugin_name, 'Settings', 'Settings', $read_cap, $this->menu_slug . '-settings', array (
 				$this,
-				'network_stats_settings' 
+				'network_stats_settings'
 		) );
 		*/
 
 		/*
 		add_submenu_page ( $this->plugin_name, 'Network Stats - Site Stats', 'Site Stats', $read_cap, $this->plugin_name . '/Site_Stats', array (
 				$this,
-				'print_site_stats' 
+				'print_site_stats'
 		) );
-		
+
 		/**
 		 *
 		 * @todo Plugin Stats
@@ -212,7 +287,7 @@ class Network_Stats_Admin {
 		/*
 		add_submenu_page ( $this->plugin_name, 'Network Stats - Plugin Stats', 'Plugin Stats', $read_cap, $this->plugin_name . '/Plugin_Stats', array (
 				$this,
-				'print_plugin_stats' 
+				'print_plugin_stats'
 		) );
 		*/
 		/**
@@ -224,11 +299,11 @@ class Network_Stats_Admin {
 		/*
 		add_submenu_page ( $this->plugin_name, 'Network Stats - Options', 'Options', $read_cap, $this->plugin_name . '/Options', array (
 				$this,
-				'network_stats_overview' 
+				'network_stats_overview'
 		) );
 		*/
 	}
-	
+
 	/**
 	 * Displays WP Network Stats Plugin's main page.
 	 * @since 0.1.0
@@ -291,19 +366,63 @@ class Network_Stats_Admin {
 	}
 
 	/**
-	 * Prints the networks stats visualization page.
+	 * Prints the networks stats analytics page.
      */
-	public function network_stats_visualization_page()
+	public function network_stats_analytics_page()
 	{
 		?>
-		<div class="wrap">
-			<h2>WP Network Stats</h2>
+		<div class="bootstrap-fluid" id="analytics">
+			<div class="container-fluid">
+				<div class="error" id="vis_loading_error"><p><strong>There was an error downloading some/all of analytics data. Please refresh stats.</strong></p></div>
 
-			<h2>Sites registered over time</h2>
-			<div class="timeseries blogs"></div>
+				<h2>WP Network Stats <a href="<?php echo network_admin_url( 'admin.php?page=' . $this->plugin_name ) ?>" role="button" class="btn btn-warning">Refresh Stats</a></h2>
+				<div class="update-nag">
+					<p>This page doesn't update with latest data automatically. Please <strong>Refresh Stats</strong> and wait for the confirmation email to see latest analytics.</p>
+					<p>If you don't see any charts, you have to generate reports from Network Stats page first.</p>
+				</div>
+				<h4 id="vis_loading_block">
+					<div class="vis_loading"></div>
+					<div>Loading data for Analytics.</div>
+				</h4>
 
-			<h2>Users registered over time</h2>
-			<div class="timeseries users"></div>
+				<div class="row ">
+					<div class="col-md-12">
+						<h3>Number of Registerations</h3>
+						<div class="vis_registrations"><svg id="line_registrations"></svg></div>
+					</div>
+				</div>
+				<div class="h-divider">
+				</div>
+				<div class="row">
+					<div class="col-md-4">
+						<h3>Site Privacy</h3>
+						<div class="vis_privacy with-transitions" id="vis_privacy"><svg id="pie_privacy"></svg></div>
+					</div>
+					<div class="col-md-4 v-divider">
+						<h3>Curent Theme</h3>
+						<div class="vis_theme"><svg id="pie_theme"></svg></div>
+					</div>
+					<div class="col-md-4 v-divider">
+						<h3>DB Version</h3>
+						<div class="vis_db_version"><svg id="pie_db_version"></svg></div>
+					</div>
+				</div>
+				<div class="row" style="display:none">
+					<div class="col-md-12">
+						<h3>Site Registrations by time of day</h3>
+						<div class="vis_site_registrations"><svg id="scatter_site_registrations"></svg></div>
+					</div>
+				</div>
+				<div class="h-divider">
+				</div>
+				<div class="row" >
+					<div class="col-md-12">
+						<h3>Multidimensional Detective</h3>
+						<div class="vis_multidimensional_detective"><div class="parcoords" id="parallel_multidimensional_detective" style="height:300px"></div></div>
+						<button type="button" id="btnExport" class="btn btn-primary">Export Selected Data</button>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<?php
@@ -347,12 +466,12 @@ class Network_Stats_Admin {
 		</div>
 		<?php
 	}
-	
+
 	/**
 	 * whitelist options.
 	 * since 0.1.0
 	 */
-	public function register_settings() { 
+	public function register_settings() {
 		// register_setting( $option_group, $option_name, $sanitize_callback )
 		register_setting( NS_OPTIONS_GROUP, NS_OPTIONS_SETTINGS );
 		register_setting( NS_OPTIONS_GROUP, NS_OPTIONS_GENERATE, array($this, 'ns_validate_generate'));
@@ -366,14 +485,14 @@ class Network_Stats_Admin {
 			);
 
 		add_settings_section(
-				NS_SECTION_GENERAL,														//ID 
+				NS_SECTION_GENERAL,														//ID
 				'General Settings', 													//Title
 				array( $this, 'ns_section_general'), 					//Callback
 				NS_PAGE_SETTINGS															//Page
 			);
 
 		add_settings_section(
-				NS_SECTION_BATCH,															//ID 
+				NS_SECTION_BATCH,															//ID
 				'Batch Processing Settings', 									//Title
 				array( $this, 'ns_section_batch'), 						//Callback
 				NS_PAGE_SETTINGS															//Page
@@ -512,9 +631,9 @@ class Network_Stats_Admin {
 			$in_seconds = trim( $arr_input['in_seconds'] );
 
 		$options['notify_admin'] = $notify_admin;
-		$options['number_sites'] = $number_sites;	
-		$options['number_users'] = $number_users;	
-		$options['in_seconds'] = $in_seconds;	
+		$options['number_sites'] = $number_sites;
+		$options['number_users'] = $number_users;
+		$options['in_seconds'] = $in_seconds;
 
 		$error_always_cc = false;
 		if(!empty($arr_input['always_cc'])) {
@@ -546,7 +665,7 @@ class Network_Stats_Admin {
 	public function ns_validate_generate($arr_input) {
 		$options = get_site_option(NS_OPTIONS_GENERATE);
 		if(!isset($arr_input['email']) || empty(trim( $arr_input['email']))) {
-			$current_user = wp_get_current_user();	
+			$current_user = wp_get_current_user();
 			$input_email = $current_user->user_email;
 		} else {
 			$input_email = trim( $arr_input['email'] );
@@ -595,7 +714,7 @@ class Network_Stats_Admin {
 			'sites' => array(
 				'name' => 'Site Stats',
 				'description' => 'Site stats for all the sites in the network.',
-				'icon' => 'admin-site'
+				'icon' => 'admin-multisite'
 				),
 			'users_per_site' => array(
 				'name' =>'User Stats per Site',
@@ -636,13 +755,13 @@ class Network_Stats_Admin {
 
 		$options = get_site_option(NS_OPTIONS_GENERATE);
 		if($options != false) {
-			$whitelist_stats = $options['whitelist_stats'];	
+			$whitelist_stats = $options['whitelist_stats'];
 		}
 		if ( !is_array($whitelist_stats) ) $whitelist_stats = array();
-		
+
 		//$blacklist = get_site_option( NS_OPTIONS_GENERATE, array() );
 		// blacklist must be an array, if anything else then just make it an empty array
-		
+
 		$available_stats = $this->get_available_stats();
 		//asort($available_stats);
 
@@ -699,7 +818,7 @@ class Network_Stats_Admin {
 	public function ns_settings_email() {
 		$options = get_site_option(NS_OPTIONS_GENERATE);
 		if(empty(trim($options['email']))) {
-			$current_user = wp_get_current_user();	
+			$current_user = wp_get_current_user();
 			$input_email = $current_user->user_email;
 		} else {
 			$input_email = trim($options['email']);
@@ -782,9 +901,9 @@ class Network_Stats_Admin {
 	public function ns_settings_number_users() {
 		$options = get_site_option(NS_OPTIONS_SETTINGS);
 		$user_list = Network_Stats_Helper::get_list_all_users ();
-		
+
 		$count_users = count($user_list);
-		
+
 		echo "<input id='number_users' name='" . NS_OPTIONS_SETTINGS . "[number_users]' size='40' type='number' value='{$options['number_users']}' min='1' max='{$count_users}' />";
 		echo "<p class='description'>(WIP) The number of users for one batch of the reports generation process.</p>";
 	}
@@ -842,7 +961,7 @@ class Network_Stats_Admin {
 			$to_email = $_POST[NS_OPTIONS_GENERATE]['email'];
 			$number_sites = $options['number_sites'];
 			$in_seconds = $options['in_seconds'];
-			
+
 			$this->generate_reports($number_sites = $number_sites, $in_seconds = $in_seconds, $to_email = $to_email);
 		} else {
 			$updated = false;
@@ -886,10 +1005,10 @@ class Network_Stats_Admin {
 	 * @since 0.1.0
 	 */
 	public function generate_reports($number_sites, $in_seconds, $to_email) {
-		
+
 		$upload_dir = wp_upload_dir();
 		$report_dirname = $upload_dir['basedir'].'/'. NS_UPLOADS;
-		
+
 		$cron_id = time();
 		update_site_option( NS_CURRENT_STATUS, $cron_id);
 
@@ -941,7 +1060,7 @@ class Network_Stats_Admin {
 	public function is_valid_cron_id($args) {
 		$current_cron_id = $args['cron_id'];
 		$requested_cron_id = get_site_option(NS_CURRENT_STATUS);
-		
+
 		if(!$requested_cron_id || $current_cron_id != $requested_cron_id) {
 			//Network_Stats_Helper::write_log('Invalid cron id: ' . print_r($args, $return = true) . "\n");
 			return false;
@@ -954,7 +1073,7 @@ class Network_Stats_Admin {
 	public function is_stat_checked($slug) {
 		$options = get_site_option(NS_OPTIONS_GENERATE);
 		if($options != false) {
-			$whitelist_stats = $options['whitelist_stats'];	
+			$whitelist_stats = $options['whitelist_stats'];
 		}
 		if ( !is_array($whitelist_stats) ) $whitelist_stats = array();
 
@@ -1000,7 +1119,7 @@ class Network_Stats_Admin {
 
 		$subj = 'WP Network Stats - Report';
 		$body = 'A report of network stats was requested for ' . $network_home_url . "\n\n";
-		
+
 
 		/////////////////////
 		// Sites Summary   //
@@ -1067,7 +1186,7 @@ class Network_Stats_Admin {
 			$body .= 'Notice: The following updates are available - ' ."\n";
 
 			if(isset($wp_update_info['core']['new_version'])) {
-				$body .= '- WP-Core: WordPress is out of date. Please update from version ' . $wp_update_info['core']['old_version'] . ' to ' . $wp_update_info['core']['new_version'] . '.' . "\n";	
+				$body .= '- WP-Core: WordPress is out of date. Please update from version ' . $wp_update_info['core']['old_version'] . ' to ' . $wp_update_info['core']['new_version'] . '.' . "\n";
 			}
 			if(count($wp_update_info['plugins']) > 0) {
 				$body .= '- Plugins: ' . count($wp_update_info['plugins']) . "\n";
@@ -1088,7 +1207,7 @@ class Network_Stats_Admin {
 		$body .= 'There are ' . count($all_plugins) . ' plugins. ' . $count_network_active_plugins . ' are network enabled.' . "\n";
 		$body .= 'There are ' . $count_users . ' users. ' . count($all_super_admins) . ' are Super admins.' . "\n";
 
-		
+
 		$body .= "\n\n" . 'For more information on how to use this data, please visit https://github.com/sanghviharshit/WP-Network-Stats' . "\n\n";
 
 
@@ -1116,9 +1235,9 @@ class Network_Stats_Admin {
 		if($this->is_stat_checked('themes')) {
 			array_push($attachments, $report_theme_stats);
 		}
-		
+
 		if($this->is_stat_checked('sites')) {
-			
+
 			array_push($attachments, $report_site_stats);
 
 	    if($this->is_stat_checked('users_per_site')) {
@@ -1142,7 +1261,7 @@ class Network_Stats_Admin {
 			$site_admin_email = get_site_option('admin_email');
 			$headers[] = 'Cc: ' . $site_admin_email;
 		}
-		
+
 		if($ns_options_settings['always_cc'] && !empty($ns_options_settings['always_cc'])) {
 			foreach ($ns_options_settings['always_cc'] as $always_cc_email) {
 				$headers[] = 'Cc: ' . $always_cc_email;
@@ -1171,4 +1290,3 @@ class Network_Stats_Admin {
 	}
 
 }
-				

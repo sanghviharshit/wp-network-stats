@@ -101,15 +101,15 @@ class Site_Stats_Admin
 
         if (isset($args['sites']) && $args['sites']) {
             $file_site_stats = fopen($report_site_stats, $mode);
-            chmod($report_site_stats, 0644);
+            chmod($report_site_stats, NS_STATS_FILE_PERMISSION);
         }
         if (isset($args['plugins_per_site']) && $args['plugins_per_site']) {
             $file_plugin_stats_per_site = fopen($report_plugin_stats_per_site, $mode);
-            chmod($report_plugin_stats_per_site, 0644);
+            chmod($report_plugin_stats_per_site, NS_STATS_FILE_PERMISSION);
         }
         if (isset($args['users_per_site']) && $args['users_per_site']) {
             $file_user_stats_per_site = fopen($report_user_stats_per_site, $mode);
-            chmod($report_user_stats_per_site, 0644);
+            chmod($report_user_stats_per_site, NS_STATS_FILE_PERMISSION);
         }
 
 
@@ -300,7 +300,6 @@ class Site_Stats_Admin
                 $themes_allowed_on_site = WP_Theme::get_allowed_on_site();
                 $themes_allowed_on_site_count = count($themes_allowed_on_site);
 
-
                 $ns_site_row = array(
                     'blog_id' => $blog['blog_id'],
                     'blog_name' => $blog_details->blogname,
@@ -316,7 +315,7 @@ class Site_Stats_Admin
                     'current_theme' => $current_theme,
                     'themes_allowed_per_site' => $themes_allowed_on_site_count,
 
-                    'posts_count' => $posts_count,
+                    //'posts_count' => $posts_count,
                     'posts_published' => $count_posts->publish,
                     'posts_future' => $count_posts->future,
                     'posts_draft' => $count_posts->draft,
@@ -350,6 +349,17 @@ class Site_Stats_Admin
                     'deleted' => $blog_details->deleted,
                     'attachments_count' => $attachments_count
                 );
+
+                if(defined('SSW_MAIN_TABLE')) {
+                    $ssw_main_table = $wpdb->base_prefix.SSW_MAIN_TABLE;
+                    $site_type = $wpdb->get_var( 
+                        'SELECT site_type FROM '.$ssw_main_table.' WHERE blog_id = '.$blog['blog_id']
+                        );
+
+                    if($site_type) {
+                        $ns_site_row['site_type'] = $site_type;
+                    }                    
+                }
 
                 $ns_site_data [] = $ns_site_row;
                 //fputcsv($file_site_stats, $ns_site_row);
@@ -395,10 +405,10 @@ class Site_Stats_Admin
             $args['offset'] = $offset;
 
             wp_schedule_single_event(time() + $in_seconds, 'cron_refresh_site_stats', array($args));
-            Network_Stats_Helper::write_log('Site Stats Args: ' . print_r($args, $return = true) . ', count: ' . count($blog_list) . "\n");
+            Network_Stats_Helper::write_log('Site Stats Args: ' . print_r($args, $return = true) . ', count: ' . $count_blogs . "\n");
         } else {
             wp_schedule_single_event(time() + $in_seconds, 'cron_send_notification_email', array($args));
-            Network_Stats_Helper::write_log('Scheduling Email: $args' . print_r($args, $return = true) . ', count:' . count($blog_list) . "\n");
+            Network_Stats_Helper::write_log('Scheduling Email: $args' . print_r($args, $return = true) . ', count:' . $count_blogs . "\n");
         }
 
     }
@@ -420,7 +430,7 @@ class Site_Stats_Admin
             'current_theme' => 'current_theme',
             'themes_allowed_per_site' => 'themes_allowed_per_site',
 
-            'posts_count' => 'posts_count',
+            //'posts_count' => 'posts_count',
             'posts_published' => 'posts_published',
             'posts_future' => 'posts_future',
             'posts_draft' => 'posts_draft',
@@ -456,6 +466,10 @@ class Site_Stats_Admin
             'deleted' => 'deleted',
             'attachments_count' => 'attachments_count'
         );
+
+        if(defined('SSW_MAIN_TABLE')) {
+            $ns_site_row['site_type'] = 'site_type';
+        }
         return $ns_site_row;
     }
 }
