@@ -122,7 +122,7 @@ function set_globals() {
 		define( 'NS_REPORT_DIRNAME', wp_upload_dir()['basedir'] . '/' . NS_UPLOADS);
 
 	if ( ! defined( 'NS_STATS_FILE_PERMISSION' ) )
-		define( 'NS_STATS_FILE_PERMISSION', 0600);
+		define( 'NS_STATS_FILE_PERMISSION', 0660);
 
 	//define( 'SSW_PLUGIN_DIR', 'nsd_ssw/ssw.php' );
 	//define( 'MSP_PLUGIN_DIR', 'sitewide-privacy-options/sitewide-privacy-options.php' );
