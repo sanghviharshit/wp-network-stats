@@ -1256,6 +1256,7 @@ class Network_Stats_Admin {
 		$ns_options_generate = get_site_option(NS_OPTIONS_GENERATE);
 		$to_email = $ns_options_generate['email'];
 
+		$headers[] = '';
 		$ns_options_settings = get_site_option(NS_OPTIONS_SETTINGS);
 		if($ns_options_settings['notify_admin']) {
 			$site_admin_email = get_site_option('admin_email');

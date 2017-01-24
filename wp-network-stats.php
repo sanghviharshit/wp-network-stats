@@ -118,8 +118,11 @@ function set_globals() {
 
 	if ( ! defined( 'NS_UPLOADS' ) )
 		define( 'NS_UPLOADS', 'ns_uploads' );
-	if ( ! defined( 'NS_REPORT_DIRNAME' ) )
-		define( 'NS_REPORT_DIRNAME', wp_upload_dir()['basedir'] . '/' . NS_UPLOADS);
+	if ( ! defined( 'NS_REPORT_DIRNAME' ) ) {
+		$upload_dir = wp_upload_dir();
+  	$ns_report_dirname = $upload_dir['baseurl'] . '/' . NS_UPLOADS;
+		define( 'NS_REPORT_DIRNAME', $ns_report_dirname);
+	}
 
 	if ( ! defined( 'NS_STATS_FILE_PERMISSION' ) )
 		define( 'NS_STATS_FILE_PERMISSION', 0660);
