@@ -300,7 +300,48 @@ class Site_Stats_Admin
                 $themes_allowed_on_site = WP_Theme::get_allowed_on_site();
                 $themes_allowed_on_site_count = count($themes_allowed_on_site);
 
-                $ns_site_row = array(
+	            /** @var int blog privacy */
+	            $option_template = get_option('blog_template', '');
+	            $template_name = $option_template;
+				if($option_template != '') {
+					$template_query = "SELECT name FROM " . $wpdb->base_prefix . "nbt_templates WHERE 1=1 ";
+					$template_id_query = $template_query . $wpdb->prepare( "AND ID = %d", $option_template );
+					$template_name = $template_name . " - " . $wpdb->get_var( $template_id_query );
+				}
+
+	            /**
+	             * Data for Devin (Google Apps)
+	             */
+
+	            $blog_prefix = Network_Stats_Helper::get_blog_prefix( $blog['blog_id'] );
+
+
+	            $post_query = "SELECT Count(*) FROM  " .$blog_prefix . "posts WHERE 1=1 ";
+
+	            $google_drive_query = $post_query . $wpdb->prepare( "AND post_status = 'publish' AND (post_type = 'post' or post_type = 'page') AND post_content LIKE %s", "%drive.google.com%" );
+	            $count_google_drive = $wpdb->get_var( $google_drive_query );
+
+	            $google_docs_query = $post_query . $wpdb->prepare( "AND post_status = 'publish' AND (post_type = 'post' or post_type = 'page') AND post_content LIKE %s", "%docs.google.com%" );
+	            $count_google_docs = $wpdb->get_var( $google_docs_query );
+
+							$google_sites_query = $post_query . $wpdb->prepare( "AND post_status = 'publish' AND (post_type = 'post' or post_type = 'page') AND post_content LIKE %s", "%sites.google.com%" );
+	            $count_google_sites = $wpdb->get_var( $google_sites_query );
+
+	            $google_cal_query = $post_query . $wpdb->prepare( "AND post_status = 'publish' AND (post_type = 'post' or post_type = 'page') AND post_content LIKE %s", "%calendar.google.com%" );
+	            $count_google_cal = $wpdb->get_var( $google_cal_query );
+
+	            $google_groups_query = $post_query . $wpdb->prepare( "AND post_status = 'publish' AND (post_type = 'post' or post_type = 'page') AND post_content LIKE %s", "%groups.google.com%" );
+	            $count_google_groups = $wpdb->get_var( $google_groups_query );
+
+	            $google_hangouts_query = $post_query . $wpdb->prepare( "AND post_status = 'publish' AND (post_type = 'post' or post_type = 'page') AND post_content LIKE %s", "%hangouts.google.com%" );
+	            $count_google_hangouts = $wpdb->get_var( $google_hangouts_query );
+
+	            $nyu_stream_query = $post_query . $wpdb->prepare( "AND post_status = 'publish' AND (post_type = 'post' or post_type = 'page') AND post_content LIKE %s", "%[nyustream%" );
+	            $count_nyu_stream = $wpdb->get_var( $nyu_stream_query );
+
+
+
+	            $ns_site_row = array(
                     'blog_id' => $blog['blog_id'],
                     'blog_name' => $blog_details->blogname,
                     'blog_descripiton' => $blog_description,
@@ -347,7 +388,19 @@ class Site_Stats_Admin
                     'mature' => $blog_details->mature,
                     'spam' => $blog_details->spam,
                     'deleted' => $blog_details->deleted,
-                    'attachments_count' => $attachments_count
+                    'attachments_count' => $attachments_count,
+
+
+	                'nyu_stream' => $count_nyu_stream,
+                    'google_drive' => $count_google_drive,
+		            'google_docs' => $count_google_docs,
+		            'google_sites' => $count_google_sites,
+		            'google_cal' => $count_google_cal,
+		            'google_groups' => $count_google_groups,
+		            'google_hangouts' => $count_google_hangouts,
+
+		            'blog_template' => $template_name,
+
                 );
 
                 if(defined('SSW_MAIN_TABLE')) {
@@ -464,7 +517,18 @@ class Site_Stats_Admin
             'mature' => 'mature',
             'spam' => 'spam',
             'deleted' => 'deleted',
-            'attachments_count' => 'attachments_count'
+            'attachments_count' => 'attachments_count',
+
+
+	        'nyu_stream' => 'nyu_stream',
+            'google_drive' => 'google_drive',
+            'google_docs' => 'google_docs',
+            'google_sites' => 'google_sites',
+            'google_cal' => 'google_cal',
+            'google_groups' => 'google_groups',
+            'google_hangouts' => 'google_hangouts',
+	        
+	        'blog_template' => 'blog_template',
         );
 
         if(defined('SSW_MAIN_TABLE')) {
